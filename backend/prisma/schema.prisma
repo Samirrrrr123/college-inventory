@@ -102,8 +102,8 @@ model Equipment {
   status          EquipmentStatus @default(available)
   categoryId      String          @db.Uuid
   roomId          String          @db.Uuid
-  category        Category        @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-  room            Room            @relation(fields: [roomId], references: [id], onDelete: Restrict)
+  category        Category        @relation(fields: [categoryId], references: [id], onDelete: NoAction)
+  room            Room            @relation(fields: [roomId], references: [id], onDelete: NoAction)
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
   movements       Movement[]
@@ -122,10 +122,10 @@ model Movement {
   actorId     String    @db.Uuid
   reason      String    @db.VarChar(1000)
   createdAt   DateTime  @default(now())
-  equipment   Equipment @relation(fields: [equipmentId], references: [id], onDelete: Restrict)
-  fromRoom    Room      @relation("MovementFromRoom", fields: [fromRoomId], references: [id], onDelete: Restrict)
-  toRoom      Room      @relation("MovementToRoom", fields: [toRoomId], references: [id], onDelete: Restrict)
-  actor       User      @relation(fields: [actorId], references: [id], onDelete: Restrict)
+  equipment   Equipment @relation(fields: [equipmentId], references: [id], onDelete: NoAction)
+  fromRoom    Room      @relation("MovementFromRoom", fields: [fromRoomId], references: [id], onDelete: NoAction)
+  toRoom      Room      @relation("MovementToRoom", fields: [toRoomId], references: [id], onDelete: NoAction)
+  actor       User      @relation(fields: [actorId], references: [id], onDelete: NoAction)
 
   @@index([equipmentId, createdAt])
   @@index([fromRoomId])
