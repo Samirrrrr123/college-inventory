@@ -43,10 +43,12 @@ export function AuthLayout() {
               {t('light')} / {t('dark')}
             </button>
           </div>
-          <div className="auth-demo-note">
-            <p>{t('authPreviewNote')}</p>
-            <Link to="/">{t('openDemo')} →</Link>
-          </div>
+          {pathname !== '/account' && (
+            <div className="auth-demo-note">
+              <p>{t('authPreviewNote')}</p>
+              <Link to="/">{t('openDemo')} →</Link>
+            </div>
+          )}
         </div>
       </main>
     </div>

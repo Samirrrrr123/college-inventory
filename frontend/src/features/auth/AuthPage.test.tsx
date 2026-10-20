@@ -1,9 +1,11 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { renderApp } from '../../test/renderApp';
 
-describe('Authentication forms before API integration', () => {
+afterEach(() => vi.unstubAllGlobals());
+
+describe('Authentication forms', () => {
   it('validates login fields and focuses the first error', async () => {
     const user = userEvent.setup();
     renderApp('/login');
@@ -16,7 +18,8 @@ describe('Authentication forms before API integration', () => {
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
   });
 
-  it('checks password confirmation and never creates a local account', async () => {
+  it('checks password confirmation and reports a network failure without creating a local account', async () => {
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('Network failure')));
     const user = userEvent.setup();
     renderApp('/register');
     expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
@@ -32,7 +35,9 @@ describe('Authentication forms before API integration', () => {
     await user.clear(confirmation);
     await user.type(confirmation, 'Example-123');
     await user.click(screen.getByRole('button', { name: 'Создать аккаунт' }));
-    expect(screen.getByRole('status')).toHaveTextContent('операция не выполнена');
+    expect(
+      await screen.findByText('Сервер недоступен. Попробуйте ещё раз позже.'),
+    ).toBeInTheDocument();
     expect(password).toHaveValue('');
     expect(confirmation).toHaveValue('');
     expect(JSON.stringify(localStorage)).not.toContain('Example-123');

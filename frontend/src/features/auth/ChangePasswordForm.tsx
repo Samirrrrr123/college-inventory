@@ -4,17 +4,28 @@ import { usePreferences } from '../../app/Preferences';
 import { Button } from '../../components/Button';
 import { Dialog } from '../../components/Dialog';
 import { PasswordField } from './PasswordField';
+import { api, clearSession } from '../../api/client';
+import { errorMessage } from '../../api/errorMessage';
 
-export function ChangePasswordForm({ onClose }: { onClose: () => void }) {
+export function ChangePasswordForm({
+  onClose,
+  onChanged,
+}: {
+  onClose: () => void;
+  onChanged?: () => void;
+}) {
   const { t } = usePreferences();
   const [current, setCurrent] = useState('');
   const [password, setPassword] = useState('');
   const [confirmation, setConfirmation] = useState('');
   const [errors, setErrors] = useState({ current: '', password: '', confirmation: '' });
   const [notice, setNotice] = useState(false);
+  const [failure, setFailure] = useState('');
+  const [pending, setPending] = useState(false);
 
-  function submit(event: FormEvent) {
+  async function submit(event: FormEvent) {
     event.preventDefault();
+    if (pending) return;
     setNotice(false);
     const next = {
       current: current ? '' : t('required'),
@@ -28,6 +39,23 @@ export function ChangePasswordForm({ onClose }: { onClose: () => void }) {
     };
     setErrors(next);
     if (Object.values(next).some(Boolean)) return;
+    if (onChanged) {
+      setPending(true);
+      setFailure('');
+      try {
+        await api('/me/password', 'PATCH', { currentPassword: current, password });
+        clearSession();
+        onChanged();
+      } catch (error) {
+        setFailure(errorMessage(error, t));
+      } finally {
+        setCurrent('');
+        setPassword('');
+        setConfirmation('');
+        setPending(false);
+      }
+      return;
+    }
     setCurrent('');
     setPassword('');
     setConfirmation('');
@@ -70,13 +98,20 @@ export function ChangePasswordForm({ onClose }: { onClose: () => void }) {
           error={errors.confirmation}
           autoComplete="new-password"
         />
+        {failure && (
+          <p className="field-error" role="alert">
+            {failure}
+          </p>
+        )}
         {notice && (
           <p className="auth-submit-notice" role="status">
             {t('authUnavailable')}
           </p>
         )}
         <div className="dialog-actions">
-          <Button type="submit">{t('savePassword')}</Button>
+          <Button type="submit" disabled={pending}>
+            {t(pending ? 'pleaseWait' : 'savePassword')}
+          </Button>
           <Button variant="secondary" onClick={onClose}>
             {t('cancel')}
           </Button>

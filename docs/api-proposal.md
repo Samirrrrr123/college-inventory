@@ -1,6 +1,6 @@
 # API: предложение для согласования
 
-Статус: черновик frontend, ещё не согласован с Артёмом. Это отправная точка для OpenAPI 3, а не описание уже работающего сервера. Если backend уже реализован иначе, согласуем различия до интеграции.
+Статус: предметные маршруты ниже остаются предложением для Артёма. Модуль аккаунтов уже реализован со стороны Самира по его согласованию: точный работающий контракт — `/api/openapi.json`, описание передачи — [auth-handoff.md](auth-handoff.md). Для оборудования, выдач и остальных сущностей этот файл пока не означает наличия серверной реализации.
 
 Уточнение предметной области: календарное резервирование не требуется для темы учёта оборудования. Рекомендуемый вариант для интеграции — заявка на несколько конкретных единиц, выдача и возврат комплекта целиком. Доступность проверяется при фактической выдаче. Демонстрационный интерфейс уже поддерживает комплект; точные поля состава заявки/выдачи нужно получить из OpenAPI backend.
 
@@ -15,18 +15,18 @@
 
 ## Основные объекты
 
-| Объект | Поля, необходимые интерфейсу |
-| --- | --- |
-| Пользователь | id, name, email, role, isBlocked |
-| Категория | id, name |
-| Аудитория | id, number, name, building, floor |
-| Оборудование | id, name, inventoryNumber, categoryId, roomId, status, description, attachmentId |
-| Заявка | id, number, requesterId, items (equipmentId), purpose, status, createdAt |
-| Выдача | id, recipientId, requestId, items (equipmentId), issuedAt, dueAt, returnedAt |
-| Перемещение | id, equipmentId, fromRoomId, toRoomId, actorId, createdAt |
+| Объект         | Поля, необходимые интерфейсу                                                     |
+| -------------- | -------------------------------------------------------------------------------- |
+| Пользователь   | id, name, email, role, isBlocked                                                 |
+| Категория      | id, name                                                                         |
+| Аудитория      | id, number, name, building, floor                                                |
+| Оборудование   | id, name, inventoryNumber, categoryId, roomId, status, description, attachmentId |
+| Заявка         | id, number, requesterId, items (equipmentId), purpose, status, createdAt         |
+| Выдача         | id, recipientId, requestId, items (equipmentId), issuedAt, dueAt, returnedAt     |
+| Перемещение    | id, equipmentId, fromRoomId, toRoomId, actorId, createdAt                        |
 | Инвентаризация | id, roomId, actorId, status, startedAt, completedAt; позиции: equipmentId, found |
-| Вложение | id, originalName, mimeType, size, downloadUrl |
-| Аудит | id, actorId, action, entityType, entityId, createdAt |
+| Вложение       | id, originalName, mimeType, size, downloadUrl                                    |
+| Аудит          | id, actorId, action, entityType, entityId, createdAt                             |
 
 Это поля для обмена данными, а не готовая схема БД. Связи, таблицы и миграции проектирует Артём. Для таблиц интерфейса API также должен отдавать отображаемые имена связанных объектов либо справочники. Пароль и его хеш в ответ пользователя не входят.
 
@@ -34,20 +34,20 @@
 
 ## Маршруты
 
-| Раздел | Предлагаемые запросы |
-| --- | --- |
-| Доступ | POST `/auth/register`, `/auth/login`, `/auth/refresh`, `/auth/logout`, `/auth/forgot-password`, `/auth/reset-password` |
-| Профиль | GET/PATCH `/me`, PATCH `/me/password`, GET `/me/activity` |
-| Каталог | GET/POST `/equipment`, GET/PATCH/DELETE `/equipment/{id}` |
-| Справочники | GET/POST `/categories`, `/rooms`; GET/PATCH/DELETE `/categories/{id}`, `/rooms/{id}` |
-| Заявки | GET/POST `/requests`, GET `/requests/{id}`, POST `/requests/{id}/approve`, `/reject`, `/cancel` |
-| Выдачи | GET/POST `/loans`, GET `/loans/{id}`, POST `/loans/{id}/return` |
-| Перемещения | GET/POST `/movements` |
-| Инвентаризация | GET/POST `/inventory-checks`, GET/PATCH `/inventory-checks/{id}`, POST `/inventory-checks/{id}/complete` |
-| Пользователи | GET/POST `/users`, GET/PATCH `/users/{id}`; изменение роли и блокировки через PATCH |
-| Вложения | POST `/files` с multipart-полем `file`, GET/DELETE `/files/{id}` |
-| Статистика | GET `/dashboard` |
-| Дополнения | GET `/audit`, GET `/equipment/export` с XLSX в теле и Content-Disposition |
+| Раздел         | Предлагаемые запросы                                                                                                   |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Доступ         | POST `/auth/register`, `/auth/login`, `/auth/refresh`, `/auth/logout`, `/auth/forgot-password`, `/auth/reset-password` |
+| Профиль        | GET/PATCH `/me`, PATCH `/me/password`, GET `/me/activity`                                                              |
+| Каталог        | GET/POST `/equipment`, GET/PATCH/DELETE `/equipment/{id}`                                                              |
+| Справочники    | GET/POST `/categories`, `/rooms`; GET/PATCH/DELETE `/categories/{id}`, `/rooms/{id}`                                   |
+| Заявки         | GET/POST `/requests`, GET `/requests/{id}`, POST `/requests/{id}/approve`, `/reject`, `/cancel`                        |
+| Выдачи         | GET/POST `/loans`, GET `/loans/{id}`, POST `/loans/{id}/return`                                                        |
+| Перемещения    | GET/POST `/movements`                                                                                                  |
+| Инвентаризация | GET/POST `/inventory-checks`, GET/PATCH `/inventory-checks/{id}`, POST `/inventory-checks/{id}/complete`               |
+| Пользователи   | GET/POST `/users`, GET/PATCH `/users/{id}`; изменение роли и блокировки через PATCH                                    |
+| Вложения       | POST `/files` с multipart-полем `file`, GET/DELETE `/files/{id}`                                                       |
+| Статистика     | GET `/dashboard`                                                                                                       |
+| Дополнения     | GET `/audit`, GET `/equipment/export` с XLSX в теле и Content-Disposition                                              |
 
 Начальный лимит файлов: JPG, PNG или PDF, до 5 МБ. Сервер проверяет размер, содержимое, права загрузки и скачивания. Непроверенный оригинальный файл не исполняется в браузере как страница.
 

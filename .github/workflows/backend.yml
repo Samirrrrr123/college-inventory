@@ -1,0 +1,103 @@
+name: Backend and integration
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backend-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend and API integration
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:18-alpine
+        env:
+          POSTGRES_USER: inventory
+          POSTGRES_PASSWORD: ci-database-password
+          POSTGRES_DB: inventory_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U inventory -d inventory_test"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 15
+    env:
+      NODE_ENV: test
+      DATABASE_URL: postgresql://inventory:ci-database-password@127.0.0.1:5432/inventory_test
+      CLIENT_ORIGIN: http://127.0.0.1:5173
+      ACCESS_SECRET: ci-only-access-secret-with-at-least-32-characters
+      REFRESH_SECRET: ci-only-refresh-secret-with-at-least-32-characters
+      SEED_PASSWORD: ci-only-seed-password
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - uses: pnpm/action-setup@v6
+        with:
+          version: 11.25.0
+          cache: true
+          cache_dependency_path: |
+            backend/pnpm-lock.yaml
+            frontend/pnpm-lock.yaml
+      - name: Install dependencies
+        run: |
+          pnpm --dir backend install --frozen-lockfile
+          pnpm --dir frontend install --frozen-lockfile
+      - name: Generate client and migrate PostgreSQL
+        working-directory: backend
+        run: |
+          pnpm generate
+          pnpm migrate
+      - name: Check backend
+        working-directory: backend
+        run: |
+          pnpm lint
+          pnpm format:check
+          pnpm typecheck
+          pnpm test
+          pnpm build
+      - name: Start API
+        working-directory: backend
+        run: |
+          node dist/server.js > /tmp/inventory-api.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:3001/api/health > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          exit 1
+      - name: Install browser
+        working-directory: frontend
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Browser tests with API
+        working-directory: frontend
+        env:
+          RUN_API_TESTS: "1"
+        run: pnpm test:e2e
+      - name: Build and start Compose
+        env:
+          POSTGRES_PASSWORD: ci-compose-database-password
+          CLIENT_ORIGIN: http://127.0.0.1:8080
+          NODE_ENV: development
+        run: docker compose up --build --detach --wait --wait-timeout 180
+      - name: Verify Compose through Nginx
+        run: node backend/tests/compose-smoke.mjs
+      - name: Stop Compose
+        if: always()
+        env:
+          POSTGRES_PASSWORD: ci-compose-database-password
+        run: docker compose down
