@@ -9,6 +9,7 @@ import { ProfilePage } from '../pages/ProfilePage';
 import { usePreferences } from './Preferences';
 import { AuthLayout } from '../features/auth/AuthLayout';
 import { AuthPage } from '../features/auth/AuthPage';
+import { AccountPage } from '../features/auth/AccountPage';
 
 function NotFoundPage() {
   const { t } = usePreferences();
@@ -30,6 +31,7 @@ export function App() {
         <Route path="register" element={<AuthPage key="register" mode="register" />} />
         <Route path="forgot-password" element={<AuthPage key="forgot" mode="forgot" />} />
         <Route path="reset-password" element={<AuthPage key="reset" mode="reset" />} />
+        <Route path="account" element={<AccountPage />} />
       </Route>
       <Route element={<Layout />}>
         <Route index element={<OverviewPage />} />

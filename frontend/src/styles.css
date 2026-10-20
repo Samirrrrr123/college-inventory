@@ -1847,3 +1847,40 @@ body:has(dialog[open]) {
     animation-duration: 0.01ms !important;
   }
 }
+.account-card {
+  width: 100%;
+  max-width: 680px;
+}
+.account-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+.account-role {
+  margin: 0 0 20px;
+  color: var(--muted);
+}
+.account-activity {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.account-activity li {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+.account-activity time {
+  white-space: nowrap;
+}
+.account-card .security-section {
+  margin-top: 28px;
+  gap: 12px;
+}
+.account-card > .muted {
+  margin-top: 24px;
+}

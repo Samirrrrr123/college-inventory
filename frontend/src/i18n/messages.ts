@@ -1,4 +1,53 @@
 export const messages = {
+  accountTitle: ['Мой аккаунт', 'My account'],
+  accountDescription: [
+    'Данные аккаунта сохраняются на сервере.',
+    'Account details are saved on the server.',
+  ],
+  accountCreated: [
+    'Аккаунт создан. Теперь войдите с вашим email и паролем.',
+    'Account created. Sign in with your email and password.',
+  ],
+  resetRequested: [
+    'Если аккаунт существует, ссылка восстановления подготовлена. В учебной версии она выводится в журнал сервера.',
+    'If the account exists, a reset link has been prepared. In this educational version it is printed in the server log.',
+  ],
+  passwordResetDone: [
+    'Пароль изменён. Войдите с новым паролем.',
+    'Password changed. Sign in with your new password.',
+  ],
+  serverUnavailable: [
+    'Сервер недоступен. Попробуйте ещё раз позже.',
+    'The server is unavailable. Please try again later.',
+  ],
+  incorrectCredentials: ['Неверный email или пароль.', 'Incorrect email or password.'],
+  sessionExpired: ['Сессия завершена. Войдите снова.', 'Your session ended. Please sign in again.'],
+  resetExpired: [
+    'Ссылка восстановления недействительна или устарела.',
+    'The reset link is invalid or expired.',
+  ],
+  wrongCurrentPassword: ['Текущий пароль указан неверно.', 'The current password is incorrect.'],
+  tooManyAttempts: [
+    'Слишком много попыток. Попробуйте позже.',
+    'Too many attempts. Please try again later.',
+  ],
+  checkFields: ['Проверьте заполнение полей.', 'Check the form fields.'],
+  requestFailed: [
+    'Не удалось выполнить запрос. Попробуйте снова.',
+    'The request failed. Please try again.',
+  ],
+  pleaseWait: ['Подождите…', 'Please wait…'],
+  tryAgain: ['Повторить', 'Try again'],
+  signOut: ['Выйти из аккаунта', 'Sign out'],
+  noActivity: ['Пока нет действий.', 'No activity yet.'],
+  activityRegistered: ['Аккаунт создан', 'Account created'],
+  activitySignedIn: ['Вход в аккаунт', 'Signed in'],
+  activityProfileUpdated: ['Профиль изменён', 'Profile updated'],
+  activityPasswordChanged: ['Пароль изменён', 'Password changed'],
+  inventoryPending: [
+    'Аккаунты уже работают с базой данных. Каталог и выдачи пока доступны отдельно в демонстрационном режиме.',
+    'Accounts are connected to the database. Equipment and loans are currently available separately in the demo.',
+  ],
   brand: ['инвентарь', 'inventory'],
   collegeEquipment: ['Оборудование колледжа', 'College equipment'],
   context: ['КОЛЛЕДЖ / УЧЁТ ИМУЩЕСТВА', 'COLLEGE / EQUIPMENT MANAGEMENT'],
@@ -379,8 +428,8 @@ export const messages = {
   signInLink: ['Уже есть аккаунт? Войти', 'Already have an account? Sign in'],
   backToSignIn: ['Вернуться ко входу', 'Back to sign in'],
   authPreviewNote: [
-    'Формы пока не подключены к серверу. Можно посмотреть приложение в деморежиме.',
-    'These forms are not connected to the server yet. You can explore the demo.',
+    'Вход и аккаунты работают с сервером. Каталог оборудования пока можно посмотреть отдельно в деморежиме.',
+    'Sign-in and accounts use the server. Equipment is currently available separately in the demo.',
   ],
   openDemo: ['Посмотреть демоверсию', 'Explore the demo'],
   authUnavailable: [

@@ -62,6 +62,7 @@ test('all main screens fit the required viewport range', async ({ page }) => {
 });
 
 test('public forms validate data and keep the demo separate from signing in', async ({ page }) => {
+  await page.route('**/api/auth/register', (route) => route.abort('failed'));
   await page.goto('/login');
   await page.getByRole('button', { name: 'Войти', exact: true }).click();
   await expect(page.getByLabel('Email')).toBeFocused();
@@ -74,7 +75,7 @@ test('public forms validate data and keep the demo separate from signing in', as
   await expect(page.getByText('Пароли не совпадают')).toBeVisible();
   await page.getByLabel('Повторите пароль', { exact: true }).fill('Example-123');
   await page.getByRole('button', { name: 'Создать аккаунт', exact: true }).click();
-  await expect(page.getByRole('status')).toContainText('операция не выполнена');
+  await expect(page.getByText('Сервер недоступен. Попробуйте ещё раз позже.')).toBeVisible();
   await expect(page.getByLabel('Пароль', { exact: true })).toHaveValue('');
   await expect(page).toHaveURL(/\/register$/);
   await page.getByRole('button', { name: 'Язык интерфейса' }).click();
