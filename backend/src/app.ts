@@ -12,6 +12,7 @@ import { AuthService } from './auth/service.js';
 import { authController } from './auth/controller.js';
 import { ApiError } from './errors.js';
 import { openapi } from './openapi.js';
+import { catalogController } from './catalog/controller.js';
 
 export function createApp(service: AuthService, config: Config) {
   const app = express();
@@ -50,6 +51,7 @@ export function createApp(service: AuthService, config: Config) {
   });
   app.get('/api/openapi.json', (_req, res) => res.json(openapi));
   app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(openapi));
+  app.use('/api', catalogController(service));
   app.use('/api', authController(service, config));
   app.use((_req, _res, next) => next(new ApiError(404, 'NOT_FOUND', 'Resource not found')));
   const handleError: ErrorRequestHandler = (error: unknown, _req, res, _next) => {
@@ -68,7 +70,13 @@ export function createApp(service: AuthService, config: Config) {
         .status(409)
         .json({ error: { code: 'EMAIL_EXISTS', message: 'This email is already in use' } });
     } else if (error instanceof ApiError) {
-      res.status(error.status).json({ error: { code: error.code, message: error.message } });
+      res.status(error.status).json({
+        error: {
+          code: error.code,
+          message: error.message,
+          ...(error.fields ? { fields: error.fields } : {}),
+        },
+      });
     } else if (error instanceof SyntaxError && 'body' in error) {
       res.status(400).json({ error: { code: 'INVALID_JSON', message: 'Invalid JSON body' } });
     } else if (

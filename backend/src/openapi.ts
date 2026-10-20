@@ -1,3 +1,4 @@
+import { catalogPaths, catalogSchemas } from './catalog/openapi.js';
 const string = { type: 'string' };
 const password = { type: 'string', minLength: 8, maxLength: 72, format: 'password' };
 const profile = {
@@ -65,10 +66,10 @@ const pagination = ['page', 'pageSize'].map((name) => ({
 export const openapi = {
   openapi: '3.0.3',
   info: {
-    title: 'Инвентарь — API аккаунтов',
-    version: '0.1.0',
+    title: 'Инвентарь — API аккаунтов и каталога',
+    version: '0.2.0',
     description:
-      'Accounts, sessions and personal activity are implemented. Equipment, loans, uploads and exports are not implemented by this module. Reset links are printed in server logs for the educational assignment.',
+      'Accounts, sessions, equipment, categories and rooms are implemented. Loans, uploads and exports are not implemented in this stage. Reset links are printed in server logs for the educational assignment.',
   },
   servers: [{ url: '/api' }],
   components: {
@@ -78,6 +79,7 @@ export const openapi = {
     },
     schemas: {
       User: user,
+      ...catalogSchemas,
       Error: {
         type: 'object',
         required: ['error'],
@@ -96,6 +98,7 @@ export const openapi = {
     },
   },
   paths: {
+    ...catalogPaths,
     '/health': {
       get: {
         summary: 'Database readiness',
@@ -222,6 +225,9 @@ export const openapi = {
                   properties: {
                     id: string,
                     actorId: string,
+                    entityType: { ...string, nullable: true },
+                    entityId: { ...string, format: 'uuid', nullable: true },
+                    details: { type: 'object', nullable: true, additionalProperties: true },
                     action: string,
                     createdAt: { ...string, format: 'date-time' },
                   },

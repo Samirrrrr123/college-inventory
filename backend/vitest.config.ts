@@ -8,7 +8,7 @@ export default defineConfig({
     testTimeout: 20000,
     coverage: {
       provider: 'v8',
-      include: ['src/auth/service.ts'],
+      include: ['src/**/service.ts'],
       reporter: ['text', 'json-summary', 'html'],
       thresholds: { statements: 60, branches: 60, functions: 60, lines: 60 },
     },

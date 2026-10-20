@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
+import { seedCatalog } from './catalog-seed.js';
 
 const db = new PrismaClient();
 const password = process.env.SEED_PASSWORD;
@@ -25,7 +26,10 @@ try {
       update: {},
     });
   }
-  console.log('Seed accounts are ready; existing passwords were preserved');
+  await seedCatalog(db);
+  console.log(
+    'Seed accounts and catalog are ready; existing passwords and records were preserved',
+  );
 } finally {
   await db.$disconnect();
 }

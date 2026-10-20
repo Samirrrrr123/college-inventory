@@ -25,6 +25,7 @@ model User {
   sessions     Session[]
   resetTokens  PasswordReset[]
   activity     AuditEntry[]
+  movements    Movement[]
 
   @@index([roleId])
   @@index([name])
@@ -57,7 +58,77 @@ model AuditEntry {
   actorId   String   @db.Uuid
   actor     User     @relation(fields: [actorId], references: [id])
   action    String
+  entityType String?
+  entityId   String? @db.Uuid
+  details    Json?
   createdAt DateTime @default(now())
 
   @@index([actorId, createdAt])
+}
+
+enum EquipmentStatus {
+  available
+  issued
+  repair
+  written_off
+}
+
+model Category {
+  id        String      @id @default(uuid()) @db.Uuid
+  name      String      @unique @db.VarChar(100)
+  equipment Equipment[]
+}
+
+model Room {
+  id          String      @id @default(uuid()) @db.Uuid
+  number      String      @db.VarChar(30)
+  name        String      @db.VarChar(100)
+  building    String      @db.VarChar(100)
+  floor       Int
+  equipment   Equipment[]
+  movementsIn Movement[]  @relation("MovementToRoom")
+  movementsOut Movement[] @relation("MovementFromRoom")
+
+  @@unique([building, number])
+  @@index([number])
+}
+
+model Equipment {
+  id              String          @id @default(uuid()) @db.Uuid
+  name            String          @db.VarChar(200)
+  inventoryNumber String          @unique @db.VarChar(80)
+  serialNumber    String?         @db.VarChar(100)
+  description     String          @default("") @db.VarChar(5000)
+  status          EquipmentStatus @default(available)
+  categoryId      String          @db.Uuid
+  roomId          String          @db.Uuid
+  category        Category        @relation(fields: [categoryId], references: [id], onDelete: NoAction)
+  room            Room            @relation(fields: [roomId], references: [id], onDelete: NoAction)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  movements       Movement[]
+
+  @@index([categoryId])
+  @@index([roomId])
+  @@index([status, createdAt, id])
+  @@index([name, id])
+}
+
+model Movement {
+  id          String    @id @default(uuid()) @db.Uuid
+  equipmentId String    @db.Uuid
+  fromRoomId  String    @db.Uuid
+  toRoomId    String    @db.Uuid
+  actorId     String    @db.Uuid
+  reason      String    @db.VarChar(1000)
+  createdAt   DateTime  @default(now())
+  equipment   Equipment @relation(fields: [equipmentId], references: [id], onDelete: NoAction)
+  fromRoom    Room      @relation("MovementFromRoom", fields: [fromRoomId], references: [id], onDelete: NoAction)
+  toRoom      Room      @relation("MovementToRoom", fields: [toRoomId], references: [id], onDelete: NoAction)
+  actor       User      @relation(fields: [actorId], references: [id], onDelete: NoAction)
+
+  @@index([equipmentId, createdAt])
+  @@index([fromRoomId])
+  @@index([toRoomId])
+  @@index([actorId])
 }
