@@ -1884,3 +1884,27 @@ body:has(dialog[open]) {
 .account-card > .muted {
   margin-top: 24px;
 }
+.live-loading {
+  max-width: 720px;
+  margin: 80px auto;
+  padding: 24px;
+}
+.field textarea {
+  width: 100%;
+  min-height: 100px;
+  resize: vertical;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+}
+.catalog-description {
+  margin: 20px 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.directory-filters {
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}

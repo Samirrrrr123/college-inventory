@@ -13,6 +13,12 @@ const keys: Record<string, MessageKey> = {
   PASSWORD_UNCHANGED: 'passwordUnchanged',
   RATE_LIMITED: 'tooManyAttempts',
   VALIDATION_ERROR: 'checkFields',
+  INVENTORY_NUMBER_EXISTS: 'duplicateNumber',
+  ALREADY_EXISTS: 'directoryDuplicate',
+  RELATED_RECORDS: 'relatedRecords',
+  EQUIPMENT_ISSUED: 'issuedCannotChange',
+  CONCURRENT_CHANGE: 'concurrentChange',
+  NOT_FOUND: 'recordMissing',
 };
 
 export function errorMessage(error: unknown, t: (key: MessageKey) => string) {
