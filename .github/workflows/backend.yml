@@ -98,4 +98,6 @@ jobs:
         run: node backend/tests/compose-smoke.mjs
       - name: Stop Compose
         if: always()
+        env:
+          POSTGRES_PASSWORD: ci-compose-database-password
         run: docker compose down
