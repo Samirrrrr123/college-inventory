@@ -85,6 +85,9 @@ export function Layout() {
         <div className="sidebar-account">
           <strong>{person.name}</strong>
           <span>{roleLabel}</span>
+          <Link className="sidebar-login" to="/login">
+            {t('signInTitle')} →
+          </Link>
           <div className="sidebar-preferences">
             <button
               type="button"

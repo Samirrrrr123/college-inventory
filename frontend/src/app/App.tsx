@@ -7,6 +7,8 @@ import { RoomsPage } from '../pages/RoomsPage';
 import { AdministrationPage } from '../pages/AdministrationPage';
 import { ProfilePage } from '../pages/ProfilePage';
 import { usePreferences } from './Preferences';
+import { AuthLayout } from '../features/auth/AuthLayout';
+import { AuthPage } from '../features/auth/AuthPage';
 
 function NotFoundPage() {
   const { t } = usePreferences();
@@ -23,6 +25,12 @@ function NotFoundPage() {
 export function App() {
   return (
     <Routes>
+      <Route element={<AuthLayout />}>
+        <Route path="login" element={<AuthPage key="login" mode="login" />} />
+        <Route path="register" element={<AuthPage key="register" mode="register" />} />
+        <Route path="forgot-password" element={<AuthPage key="forgot" mode="forgot" />} />
+        <Route path="reset-password" element={<AuthPage key="reset" mode="reset" />} />
+      </Route>
       <Route element={<Layout />}>
         <Route index element={<OverviewPage />} />
         <Route path="equipment" element={<EquipmentPage />} />

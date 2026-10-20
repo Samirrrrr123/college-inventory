@@ -1,5 +1,281 @@
 @import 'tailwindcss';
 
+.auth-layout {
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: 5fr 7fr;
+}
+.auth-branding {
+  display: flex;
+  flex-direction: column;
+  padding: 64px 64px 86px;
+  background: var(--nav);
+}
+.auth-brand {
+  width: fit-content;
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+.auth-story {
+  display: grid;
+  gap: 24px;
+  margin-top: 228px;
+  margin-bottom: 64px;
+}
+.auth-story img {
+  display: block;
+}
+.auth-story h2 {
+  font-size: 30px;
+  line-height: 1.45;
+  letter-spacing: 0;
+}
+.auth-story > p {
+  max-width: 450px;
+  color: var(--muted);
+  font-size: 18px;
+}
+.auth-authors {
+  margin-top: auto;
+  color: var(--muted);
+  font-size: 12px;
+}
+.auth-main {
+  min-width: 0;
+  background: var(--surface);
+}
+.auth-main--login {
+  padding: 244px 120px 64px;
+}
+.auth-content {
+  width: 100%;
+  max-width: 600px;
+  margin-inline: auto;
+}
+.auth-heading {
+  display: grid;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.auth-heading h1 {
+  line-height: 1.45;
+  letter-spacing: 0;
+}
+.auth-heading > p {
+  color: var(--muted);
+}
+.auth-form {
+  display: grid;
+  gap: 24px;
+}
+.auth-form > .field,
+.auth-form > .password-control {
+  min-height: 78px;
+}
+.auth-form .field label {
+  font-size: 12px;
+}
+.auth-form input {
+  width: 100%;
+  min-width: 0;
+}
+.password-control {
+  position: relative;
+  min-width: 0;
+}
+.password-control input {
+  padding-right: 96px;
+}
+.password-toggle {
+  position: absolute;
+  top: 29px;
+  right: 8px;
+  height: 34px;
+  padding-inline: 8px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--accent);
+  font-size: 12px;
+}
+.password-toggle:hover {
+  background: var(--accent-soft);
+}
+.auth-forgot-link {
+  width: fit-content;
+  color: var(--accent);
+  font-size: 12px;
+}
+.auth-next-link {
+  display: block;
+  width: fit-content;
+  margin-top: 24px;
+  color: var(--accent);
+  font-size: 13px;
+}
+.auth-next-link:hover,
+.auth-forgot-link:hover,
+.auth-demo-note a:hover,
+.auth-invalid-link a:hover,
+.sidebar-login:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.auth-preferences {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  margin-top: 24px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.auth-preferences button {
+  min-height: 32px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  padding: 0;
+}
+.auth-demo-note {
+  display: grid;
+  gap: 10px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 12px;
+}
+.auth-demo-note a {
+  width: fit-content;
+  color: var(--accent);
+}
+.auth-main--card {
+  display: flex;
+  align-items: center;
+  padding: 64px 40px;
+}
+.auth-main--card .auth-content {
+  max-width: 560px;
+}
+.auth-card {
+  padding: 40px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+}
+.auth-card--register {
+  min-height: 740px;
+}
+.auth-card--forgot {
+  min-height: 400px;
+}
+.auth-card .auth-heading {
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.auth-card h1 {
+  font-size: 28px;
+}
+.auth-card--register .auth-heading > p {
+  font-size: 12px;
+}
+.auth-card--forgot h1 {
+  font-size: 26px;
+}
+.auth-card .auth-form {
+  gap: 16px;
+}
+.auth-card .auth-next-link {
+  margin-top: 16px;
+}
+.auth-submit-notice,
+.auth-invalid-link {
+  border-radius: 8px;
+  padding: 12px;
+  background: var(--amber-soft);
+  color: var(--amber);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.auth-invalid-link {
+  display: grid;
+  gap: 12px;
+}
+.auth-invalid-link a {
+  width: fit-content;
+}
+.sidebar-login {
+  width: fit-content;
+  margin-top: 8px;
+  font-size: 12px;
+}
+
+@media (max-width: 1200px) {
+  .auth-branding {
+    padding: 48px 40px;
+  }
+  .auth-story {
+    margin-top: 180px;
+  }
+  .auth-main--login {
+    padding: 200px 56px 48px;
+  }
+  .auth-main--card {
+    padding: 40px 24px;
+  }
+  .auth-card {
+    padding: 32px;
+  }
+}
+
+@media (max-width: 800px) {
+  .auth-layout {
+    display: flex;
+    flex-direction: column;
+  }
+  .auth-branding {
+    padding: 24px;
+  }
+  .auth-brand {
+    font-size: 24px;
+  }
+  .auth-story,
+  .auth-authors {
+    display: none;
+  }
+  .auth-main {
+    flex: 1;
+    padding: 40px 24px;
+  }
+  .auth-main--card {
+    align-items: flex-start;
+  }
+  .auth-card {
+    min-height: auto;
+    padding: 24px;
+  }
+  .auth-card h1,
+  .auth-heading h1 {
+    font-size: 26px;
+  }
+}
+
+@media (max-width: 400px) {
+  .auth-main {
+    padding: 32px 18px;
+  }
+  .auth-main--card {
+    padding: 24px 18px;
+  }
+  .auth-card {
+    padding: 20px;
+  }
+  .auth-card h1 {
+    font-size: 24px;
+  }
+}
+
 :root {
   font-family: 'Inter Variable', Inter, sans-serif;
   font-synthesis: none;
