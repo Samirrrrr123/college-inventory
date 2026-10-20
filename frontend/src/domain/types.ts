@@ -41,18 +41,20 @@ export type EquipmentInput = Omit<Equipment, 'id'>;
 export interface EquipmentRequest {
   id: string;
   number: string;
-  equipmentId: string;
+  equipmentIds: string[];
   personId: string;
-  startDate: string;
-  endDate: string;
+  purpose: string;
+  createdAt: string;
   status: RequestStatus;
 }
 
 export interface Loan {
   id: string;
   number: string;
-  equipmentId: string;
+  equipmentIds: string[];
   personId: string;
+  requestId: string | null;
+  issuedAt: string;
   dueDate: string;
   returnedAt: string | null;
 }
@@ -67,8 +69,16 @@ export interface Movement {
 
 export interface AuditEntry {
   id: string;
+  actorId: string;
   actor: string;
-  action: 'created' | 'updated' | 'deleted' | 'returned' | 'requestApproved' | 'requestRejected';
+  action:
+    | 'created'
+    | 'updated'
+    | 'deleted'
+    | 'issued'
+    | 'returned'
+    | 'requestApproved'
+    | 'requestRejected';
   subject: string;
   createdAt: string;
 }

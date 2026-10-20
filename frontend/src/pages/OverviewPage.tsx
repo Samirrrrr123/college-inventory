@@ -82,12 +82,12 @@ export function OverviewPage() {
                   </thead>
                   <tbody>
                     {overdue.slice(0, 3).map((loan) => {
-                      const item = equipment.find((item) => item.id === loan.equipmentId);
+                      const items = equipment.filter((item) => loan.equipmentIds.includes(item.id));
                       return (
                         <tr key={loan.id}>
                           <td data-label={t('equipment')}>
-                            <strong>{item?.name}</strong>
-                            <small>{item?.inventoryNumber}</small>
+                            <strong>{items.map((item) => item.name).join(', ')}</strong>
+                            <small>{loan.number}</small>
                           </td>
                           <td data-label={t('borrower')}>
                             {people.find((item) => item.id === loan.personId)?.name}
@@ -126,10 +126,13 @@ export function OverviewPage() {
                     <tr key={request.id}>
                       <td data-label={t('equipment')}>
                         <strong>
-                          {equipment.find((item) => item.id === request.equipmentId)?.name}
+                          {equipment
+                            .filter((item) => request.equipmentIds.includes(item.id))
+                            .map((item) => item.name)
+                            .join(', ')}
                         </strong>
                         <small>
-                          {request.number} · {date(request.startDate)}
+                          {request.number} · {date(request.createdAt)}
                         </small>
                       </td>
                       <td data-label={t('teacher')}>
@@ -176,7 +179,11 @@ export function OverviewPage() {
                   {equipment.find((item) => item.id === latestMovement.equipmentId)?.name}
                 </strong>
                 <p>
-                  {latestMovement.fromRoomId} → {latestMovement.toRoomId}
+                  {rooms.find((item) => item.id === latestMovement.fromRoomId)?.number ??
+                    latestMovement.fromRoomId}{' '}
+                  →{' '}
+                  {rooms.find((item) => item.id === latestMovement.toRoomId)?.number ??
+                    latestMovement.toRoomId}
                 </p>
                 <small>{date(latestMovement.createdAt)}</small>
               </>

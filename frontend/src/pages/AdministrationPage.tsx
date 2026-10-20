@@ -5,14 +5,21 @@ import { Button } from '../components/Button';
 import { Input, Select } from '../components/Fields';
 import { EmptyState, Notice, PageHeader, Tabs } from '../components/Common';
 import type { Role } from '../domain/types';
+import type { Category, Person } from '../domain/types';
+import { PersonForm } from '../features/people/PersonForm';
+import { DirectoryForm } from '../features/directories/DirectoryForm';
+import { DeleteDialog } from '../components/DeleteDialog';
 
 export function AdministrationPage() {
   const { t, language, date } = usePreferences();
-  const { person, people, categories, equipment, audit } = useDemo();
+  const { person, people, categories, equipment, audit, deleteCategory } = useDemo();
   const [tab, setTab] = useState<'users' | 'categories' | 'audit'>('users');
   const [search, setSearch] = useState('');
   const [role, setRole] = useState('');
   const [notice, setNotice] = useState('');
+  const [personForm, setPersonForm] = useState<{ item?: Person } | null>(null);
+  const [categoryForm, setCategoryForm] = useState<{ item?: Category } | null>(null);
+  const [deleting, setDeleting] = useState<Category | null>(null);
   const roleLabel = (value: Role) =>
     t(value === 'ADMIN' ? 'admin' : value === 'LAB_ASSISTANT' ? 'assistant' : 'teacher');
 
@@ -34,7 +41,10 @@ export function AdministrationPage() {
   return (
     <>
       <PageHeader title={t('administration')} subtitle={t('adminSubtitle')}>
-        <Button onClick={() => setNotice(t('backendPending'))}>+ {t('addUser')}</Button>
+        {tab === 'users' && <Button onClick={() => setPersonForm({})}>+ {t('addUser')}</Button>}
+        {tab === 'categories' && (
+          <Button onClick={() => setCategoryForm({})}>+ {t('addCategory')}</Button>
+        )}
       </PageHeader>
       <Tabs
         value={tab}
@@ -94,7 +104,11 @@ export function AdministrationPage() {
                           </span>
                         </td>
                         <td data-label={t('actions')}>
-                          <Button variant="text" onClick={() => setNotice(t('backendPending'))}>
+                          <Button
+                            variant="text"
+                            aria-label={`${t('edit')}: ${item.name}`}
+                            onClick={() => setPersonForm({ item })}
+                          >
                             {t('edit')}
                           </Button>
                         </td>
@@ -130,9 +144,22 @@ export function AdministrationPage() {
                       {equipment.filter((eq) => eq.categoryId === item.id).length}
                     </td>
                     <td data-label={t('actions')}>
-                      <Button variant="text" onClick={() => setNotice(t('backendPending'))}>
-                        {t('edit')}
-                      </Button>
+                      <div className="row-actions">
+                        <Button
+                          variant="text"
+                          aria-label={`${t('edit')}: ${item.title[language]}`}
+                          onClick={() => setCategoryForm({ item })}
+                        >
+                          {t('edit')}
+                        </Button>
+                        <Button
+                          variant="text"
+                          aria-label={`${t('delete')}: ${item.title[language]}`}
+                          onClick={() => setDeleting(item)}
+                        >
+                          {t('delete')}
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -167,6 +194,39 @@ export function AdministrationPage() {
             </table>
           </div>
         </section>
+      )}
+      {personForm && (
+        <PersonForm
+          item={personForm.item}
+          onClose={() => setPersonForm(null)}
+          onSaved={() => {
+            setPersonForm(null);
+            setNotice(t('personSaved'));
+          }}
+        />
+      )}
+      {categoryForm && (
+        <DirectoryForm
+          kind="category"
+          item={categoryForm.item}
+          onClose={() => setCategoryForm(null)}
+          onSaved={() => {
+            setCategoryForm(null);
+            setNotice(t('categorySaved'));
+          }}
+        />
+      )}
+      {deleting && (
+        <DeleteDialog
+          title={t('deleteCategory')}
+          name={deleting.title[language]}
+          onDelete={() => deleteCategory(deleting.id)}
+          onClose={() => setDeleting(null)}
+          onDeleted={() => {
+            setDeleting(null);
+            setNotice(t('directoryDeleted'));
+          }}
+        />
       )}
       {notice && <Notice onClose={() => setNotice('')}>{notice}</Notice>}
     </>

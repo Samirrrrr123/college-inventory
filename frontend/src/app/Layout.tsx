@@ -121,7 +121,7 @@ export function Layout() {
             {t('demoRole')}
             <select value={person.id} onChange={(event) => setPersonId(event.target.value)}>
               {people
-                .filter((item) => ['samir', 'artem', 'elena'].includes(item.id))
+                .filter((item) => !item.blocked)
                 .map((item) => (
                   <option key={item.id} value={item.id}>
                     {item.name}
