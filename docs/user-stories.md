@@ -20,4 +20,22 @@
 | US-14 | Как администратор, я хочу видеть аудит и экспортировать XLSX, чтобы проверять операции и готовить отчёты. | В аудите автор/действие/объект/время без секретов; XLSX учитывает фильтры и права, открывается как таблица. |
 | US-15 | Как пользователь, я хочу выбирать тему и RU/EN, чтобы удобно работать с разных устройств. | Есть светлая/тёмная/системная тема, полный перевод интерфейса, сохранение выбора и адаптивность 360–1920 px. |
 
-Ответственные за реализацию распределяются по слоям: Самир — интерфейс и общий запуск, Артём — API и данные. Каждая история может быть разбита на отдельные frontend/backend/test-задачи. Перенос историй на реальную канбан-доску ещё требуется.
+Ответственные за реализацию распределяются по слоям: Самир — интерфейс и общий запуск, Артём — API и данные. Каждая история может быть разбита на отдельные frontend/backend/test-задачи. Истории заведены в GitHub Issues. Сама доска Projects пока требует настройки; подробности — в [kanban.md](kanban.md).
+
+## Задачи GitHub
+
+- [US-01](https://github.com/Samirrrrr123/college-inventory/issues/3)
+- [US-02](https://github.com/Samirrrrr123/college-inventory/issues/4)
+- [US-03](https://github.com/Samirrrrr123/college-inventory/issues/5)
+- [US-04](https://github.com/Samirrrrr123/college-inventory/issues/6)
+- [US-05](https://github.com/Samirrrrr123/college-inventory/issues/7)
+- [US-06](https://github.com/Samirrrrr123/college-inventory/issues/8)
+- [US-07](https://github.com/Samirrrrr123/college-inventory/issues/9)
+- [US-08](https://github.com/Samirrrrr123/college-inventory/issues/10)
+- [US-09](https://github.com/Samirrrrr123/college-inventory/issues/11)
+- [US-10](https://github.com/Samirrrrr123/college-inventory/issues/12)
+- [US-11](https://github.com/Samirrrrr123/college-inventory/issues/13)
+- [US-12](https://github.com/Samirrrrr123/college-inventory/issues/14)
+- [US-13](https://github.com/Samirrrrr123/college-inventory/issues/15)
+- [US-14](https://github.com/Samirrrrr123/college-inventory/issues/16)
+- [US-15](https://github.com/Samirrrrr123/college-inventory/issues/17)
