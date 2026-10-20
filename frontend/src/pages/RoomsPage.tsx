@@ -5,6 +5,9 @@ import { Button } from '../components/Button';
 import { Input } from '../components/Fields';
 import { Dialog } from '../components/Dialog';
 import { EmptyState, Notice, PageHeader, Status, Tabs } from '../components/Common';
+import { DirectoryForm } from '../features/directories/DirectoryForm';
+import { DeleteDialog } from '../components/DeleteDialog';
+import type { Room } from '../domain/types';
 
 export function RoomsPage() {
   const { t, language, date } = usePreferences();
@@ -15,6 +18,8 @@ export function RoomsPage() {
   const [checking, setChecking] = useState(false);
   const [found, setFound] = useState<string[]>([]);
   const [notice, setNotice] = useState('');
+  const [roomForm, setRoomForm] = useState<{ item?: Room } | null>(null);
+  const [deleting, setDeleting] = useState<Room | null>(null);
   const rooms = demo.rooms.filter((item) =>
     `${item.number} ${item.title[language]}`
       .toLocaleLowerCase()
@@ -35,9 +40,7 @@ export function RoomsPage() {
   return (
     <>
       <PageHeader title={t('rooms')} subtitle={t('roomsSubtitle')}>
-        {canManage && (
-          <Button onClick={() => setNotice(t('backendPending'))}>+ {t('addRoom')}</Button>
-        )}
+        {canManage && <Button onClick={() => setRoomForm({})}>+ {t('addRoom')}</Button>}
       </PageHeader>
       <Tabs
         value={tab}
@@ -87,9 +90,14 @@ export function RoomsPage() {
                 </p>
               </div>
               {canManage && (
-                <Button variant="text" onClick={() => setNotice(t('backendPending'))}>
-                  {t('edit')} ↗
-                </Button>
+                <div className="row-actions">
+                  <Button variant="text" onClick={() => setRoomForm({ item: room })}>
+                    {t('edit')} ↗
+                  </Button>
+                  <Button variant="text" onClick={() => setDeleting(room)}>
+                    {t('delete')}
+                  </Button>
+                </div>
               )}
             </div>
             <div className="room-stats">
@@ -164,7 +172,9 @@ export function RoomsPage() {
                 <tbody>
                   {Object.entries(demo.checks).map(([id, check]) => (
                     <tr key={id}>
-                      <td data-label={t('room')}>{id}</td>
+                      <td data-label={t('room')}>
+                        {demo.rooms.find((item) => item.id === id)?.number ?? id}
+                      </td>
                       <td data-label={t('date')}>{date(check.date)}</td>
                       <td data-label={t('found')}>{check.found}</td>
                     </tr>
@@ -196,8 +206,14 @@ export function RoomsPage() {
                     <td data-label={t('equipment')}>
                       {demo.equipment.find((eq) => eq.id === item.equipmentId)?.name}
                     </td>
-                    <td data-label={t('fromRoom')}>{item.fromRoomId}</td>
-                    <td data-label={t('toRoom')}>{item.toRoomId}</td>
+                    <td data-label={t('fromRoom')}>
+                      {demo.rooms.find((room) => room.id === item.fromRoomId)?.number ??
+                        item.fromRoomId}
+                    </td>
+                    <td data-label={t('toRoom')}>
+                      {demo.rooms.find((room) => room.id === item.toRoomId)?.number ??
+                        item.toRoomId}
+                    </td>
                     <td data-label={t('date')}>{date(item.createdAt)}</td>
                   </tr>
                 ))}
@@ -247,6 +263,29 @@ export function RoomsPage() {
             </Button>
           </div>
         </Dialog>
+      )}
+      {roomForm && (
+        <DirectoryForm
+          kind="room"
+          item={roomForm.item}
+          onClose={() => setRoomForm(null)}
+          onSaved={() => {
+            setRoomForm(null);
+            setNotice(t('roomSaved'));
+          }}
+        />
+      )}
+      {deleting && (
+        <DeleteDialog
+          title={t('deleteRoom')}
+          name={`${deleting.number} · ${deleting.title[language]}`}
+          onDelete={() => demo.deleteRoom(deleting.id)}
+          onClose={() => setDeleting(null)}
+          onDeleted={() => {
+            setDeleting(null);
+            setNotice(t('directoryDeleted'));
+          }}
+        />
       )}
       {notice && <Notice onClose={() => setNotice('')}>{notice}</Notice>}
     </>

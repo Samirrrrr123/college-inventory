@@ -6,6 +6,7 @@ import { Input } from '../components/Fields';
 import { Notice, PageHeader } from '../components/Common';
 import { AppearanceSettings } from '../features/preferences/AppearanceSettings';
 import type { Person } from '../domain/types';
+import { ChangePasswordForm } from '../features/auth/ChangePasswordForm';
 
 function ProfileForm({
   person,
@@ -19,6 +20,7 @@ function ProfileForm({
   const [name, setName] = useState(person.name);
   const [email, setEmail] = useState(person.email);
   const [errors, setErrors] = useState({ name: '', email: '' });
+  const [changingPassword, setChangingPassword] = useState(false);
   const initials = person.name
     .split(' ')
     .map((part) => part[0])
@@ -53,7 +55,11 @@ function ProfileForm({
           };
           setErrors(next);
           if (next.name || next.email) return;
-          updateProfile(name.trim(), email.trim());
+          const result = updateProfile(name.trim(), email.trim());
+          if (result !== 'saved') {
+            setErrors({ name: '', email: t(result) });
+            return;
+          }
           onNotice(t('profileSaved'));
         }}
       >
@@ -79,10 +85,11 @@ function ProfileForm({
       <div className="security-section">
         <h2>{t('security')}</h2>
         <p className="muted small-text">{t('passwordNote')}</p>
-        <Button variant="secondary" onClick={() => onNotice(t('backendPending'))}>
+        <Button variant="secondary" onClick={() => setChangingPassword(true)}>
           {t('changePassword')}
         </Button>
       </div>
+      {changingPassword && <ChangePasswordForm onClose={() => setChangingPassword(false)} />}
     </section>
   );
 }
@@ -101,7 +108,7 @@ export function ProfilePage() {
           <section className="panel">
             <h2>{t('recentActivity')}</h2>
             {audit
-              .filter((item) => item.actor === person.name)
+              .filter((item) => item.actorId === person.id)
               .slice(0, 3)
               .map((item) => (
                 <div className="activity-item" key={item.id}>
@@ -111,7 +118,7 @@ export function ProfilePage() {
                   <small>{date(item.createdAt)}</small>
                 </div>
               ))}
-            {!audit.some((item) => item.actor === person.name) && (
+            {!audit.some((item) => item.actorId === person.id) && (
               <p className="muted">{t('empty')}</p>
             )}
           </section>

@@ -5,6 +5,8 @@ import { Button } from '../components/Button';
 import { Input, Select } from '../components/Fields';
 import { Dialog } from '../components/Dialog';
 import { EmptyState, Notice, PageHeader, Status, Tabs } from '../components/Common';
+import { RequestForm } from '../features/requests/RequestForm';
+import { IssueForm } from '../features/requests/IssueForm';
 import type { EquipmentRequest, Loan } from '../domain/types';
 
 export function RequestsPage() {
@@ -17,43 +19,32 @@ export function RequestsPage() {
   const [review, setReview] = useState<EquipmentRequest | null>(null);
   const [returning, setReturning] = useState<Loan | null>(null);
   const [creating, setCreating] = useState(false);
-  const [equipmentId, setEquipmentId] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-  const [error, setError] = useState('');
+  const [issuing, setIssuing] = useState<{ request?: EquipmentRequest } | null>(null);
   const [notice, setNotice] = useState('');
   const staff = person.role !== 'TEACHER';
-  const canSeePerson = (id: string) => staff || id === person.id;
-  const matches = (number: string, equipmentId: string, personId: string) =>
-    `${number} ${equipment.find((item) => item.id === equipmentId)?.name} ${people.find((item) => item.id === personId)?.name}`
+  const names = (ids: string[]) =>
+    ids.map((id) => equipment.find((item) => item.id === id)?.name ?? id).join(', ');
+  const matches = (number: string, ids: string[], personId: string) =>
+    `${number} ${names(ids)} ${people.find((item) => item.id === personId)?.name}`
       .toLocaleLowerCase()
       .includes(search.toLocaleLowerCase().trim());
   const requests = demo.requests.filter(
     (item) =>
-      canSeePerson(item.personId) &&
+      (staff || item.personId === person.id) &&
       (!status || item.status === status) &&
-      matches(item.number, item.equipmentId, item.personId),
+      matches(item.number, item.equipmentIds, item.personId),
   );
   const loans = demo.loans.filter(
     (item) =>
-      canSeePerson(item.personId) &&
+      (staff || item.personId === person.id) &&
       (tab === 'returns' ? !!item.returnedAt : !item.returnedAt) &&
-      matches(item.number, item.equipmentId, item.personId),
+      matches(item.number, item.equipmentIds, item.personId),
   );
 
   return (
     <>
       <PageHeader title={t('requests')} subtitle={t('requestsSubtitle')}>
-        <Button
-          onClick={() => {
-            if (staff) {
-              setNotice(t('backendPending'));
-              return;
-            }
-            setCreating(true);
-            setEquipmentId(equipment.find((item) => item.status === 'AVAILABLE')?.id ?? '');
-          }}
-        >
+        <Button onClick={() => (staff ? setIssuing({}) : setCreating(true))}>
           {t(staff ? 'issue' : 'newRequest')}
         </Button>
       </PageHeader>
@@ -99,7 +90,7 @@ export function RequestsPage() {
                     <th>{t('requestNumber')}</th>
                     <th>{t('equipment')}</th>
                     <th>{t('teacher')}</th>
-                    <th>{t('period')}</th>
+                    <th>{t('purpose')}</th>
                     <th>{t('status')}</th>
                     {staff && <th>{t('actions')}</th>}
                   </tr>
@@ -107,23 +98,29 @@ export function RequestsPage() {
                 <tbody>
                   {requests.map((item) => (
                     <tr key={item.id}>
-                      <td data-label={t('requestNumber')}>{item.number}</td>
+                      <td data-label={t('requestNumber')}>
+                        {item.number}
+                        <small>{date(item.createdAt)}</small>
+                      </td>
                       <td data-label={t('equipment')}>
-                        <strong>{equipment.find((eq) => eq.id === item.equipmentId)?.name}</strong>
+                        <strong>{names(item.equipmentIds)}</strong>
                       </td>
                       <td data-label={t('teacher')}>
                         {people.find((person) => person.id === item.personId)?.name}
                       </td>
-                      <td data-label={t('period')}>
-                        {date(item.startDate)}
-                        {item.endDate !== item.startDate && ` — ${date(item.endDate)}`}
+                      <td data-label={t('purpose')} className="purpose-cell">
+                        {item.purpose}
                       </td>
                       <td data-label={t('status')}>
                         <Status value={item.status} />
                       </td>
                       {staff && (
                         <td data-label={t('actions')}>
-                          <Button variant="text" onClick={() => setReview(item)}>
+                          <Button
+                            variant="text"
+                            aria-label={`${t('review')}: ${item.number}`}
+                            onClick={() => setReview(item)}
+                          >
                             {t('review')} →
                           </Button>
                         </td>
@@ -151,9 +148,7 @@ export function RequestsPage() {
                 {loans.map((loan) => (
                   <tr key={loan.id}>
                     <td data-label={t('equipment')}>
-                      <strong>
-                        {equipment.find((item) => item.id === loan.equipmentId)?.name}
-                      </strong>
+                      <strong>{names(loan.equipmentIds)}</strong>
                       <small>{loan.number}</small>
                     </td>
                     <td data-label={t('borrower')}>
@@ -162,7 +157,11 @@ export function RequestsPage() {
                     <td data-label={t('date')}>{date(loan.returnedAt ?? loan.dueDate)}</td>
                     {staff && tab === 'loans' && (
                       <td data-label={t('actions')}>
-                        <Button variant="text" onClick={() => setReturning(loan)}>
+                        <Button
+                          variant="text"
+                          aria-label={`${t('returnEquipment')}: ${loan.number}`}
+                          onClick={() => setReturning(loan)}
+                        >
                           {t('returnEquipment')}
                         </Button>
                       </td>
@@ -178,19 +177,15 @@ export function RequestsPage() {
       </section>
       {review && (
         <Dialog title={`${t('requestNumber')} ${review.number}`} onClose={() => setReview(null)}>
-          <p className="detail-title">
-            {equipment.find((item) => item.id === review.equipmentId)?.name}
-          </p>
+          <p className="detail-title">{names(review.equipmentIds)}</p>
           <dl className="detail-list">
             <div>
               <dt>{t('teacher')}</dt>
               <dd>{people.find((item) => item.id === review.personId)?.name}</dd>
             </div>
             <div>
-              <dt>{t('period')}</dt>
-              <dd>
-                {date(review.startDate)} — {date(review.endDate)}
-              </dd>
+              <dt>{t('purpose')}</dt>
+              <dd>{review.purpose}</dd>
             </div>
             <div>
               <dt>{t('status')}</dt>
@@ -199,6 +194,7 @@ export function RequestsPage() {
               </dd>
             </div>
           </dl>
+          <p className="muted small-text">{t('noReservation')}</p>
           {review.status === 'PENDING' && (
             <div className="dialog-actions">
               <Button
@@ -222,18 +218,31 @@ export function RequestsPage() {
               </Button>
             </div>
           )}
+          {review.status === 'APPROVED' &&
+            !demo.loans.some((loan) => loan.requestId === review.id) && (
+              <div className="dialog-actions">
+                <Button
+                  onClick={() => {
+                    setIssuing({ request: review });
+                    setReview(null);
+                  }}
+                >
+                  {t('issue')}
+                </Button>
+              </div>
+            )}
         </Dialog>
       )}
       {returning && (
         <Dialog title={t('returnTitle')} onClose={() => setReturning(null)}>
-          <p>{equipment.find((item) => item.id === returning.equipmentId)?.name}</p>
+          <p>{names(returning.equipmentIds)}</p>
           <p className="muted">{t('returnNote')}</p>
           <div className="dialog-actions">
             <Button
               onClick={() => {
-                demo.returnLoan(returning.id);
+                const saved = demo.returnLoan(returning.id);
                 setReturning(null);
-                setNotice(t('returnSaved'));
+                setNotice(t(saved ? 'returnSaved' : 'returnAlreadyRecorded'));
               }}
             >
               {t('confirm')}
@@ -245,68 +254,27 @@ export function RequestsPage() {
         </Dialog>
       )}
       {creating && (
-        <Dialog title={t('newRequest')} onClose={() => setCreating(false)}>
-          <form
-            className="form-stack"
-            onSubmit={(event) => {
-              event.preventDefault();
-              if (!equipmentId || !startDate || !endDate) {
-                setError(t('required'));
-                return;
-              }
-              if (endDate < startDate) {
-                setError(t('dateError'));
-                return;
-              }
-              demo.addRequest({ equipmentId, startDate, endDate });
-              setCreating(false);
-              setError('');
-              setNotice(t('requestCreated'));
-            }}
-          >
-            <Select
-              label={t('equipment')}
-              value={equipmentId}
-              onChange={(event) => setEquipmentId(event.target.value)}
-            >
-              {equipment
-                .filter((item) => item.status === 'AVAILABLE')
-                .map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {item.name}
-                  </option>
-                ))}
-            </Select>
-            <div className="form-grid">
-              <Input
-                type="date"
-                label={t('startDate')}
-                value={startDate}
-                onChange={(event) => setStartDate(event.target.value)}
-                required
-              />
-              <Input
-                type="date"
-                label={t('endDate')}
-                value={endDate}
-                min={startDate}
-                onChange={(event) => setEndDate(event.target.value)}
-                required
-              />
-            </div>
-            {error && (
-              <p className="field-error" role="alert">
-                {error}
-              </p>
-            )}
-            <div className="dialog-actions">
-              <Button type="submit">{t('sendRequest')}</Button>
-              <Button variant="secondary" onClick={() => setCreating(false)}>
-                {t('cancel')}
-              </Button>
-            </div>
-          </form>
-        </Dialog>
+        <RequestForm
+          onClose={() => setCreating(false)}
+          onSaved={() => {
+            setCreating(false);
+            setSearch('');
+            setStatus('');
+            setNotice(t('requestCreated'));
+          }}
+        />
+      )}
+      {issuing && (
+        <IssueForm
+          request={issuing.request}
+          onClose={() => setIssuing(null)}
+          onSaved={() => {
+            setIssuing(null);
+            setTab('loans');
+            setSearch('');
+            setNotice(t('issueSaved'));
+          }}
+        />
       )}
       {notice && <Notice onClose={() => setNotice('')}>{notice}</Notice>}
     </>

@@ -1,5 +1,97 @@
 @import 'tailwindcss';
 
+.row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+.checkbox-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+.checkbox-line input,
+.equipment-option input {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  accent-color: var(--accent);
+}
+.equipment-picker {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+.equipment-picker legend {
+  margin-bottom: 12px;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+.equipment-options {
+  display: grid;
+  max-height: 300px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 4px 12px;
+}
+.equipment-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+  min-width: 0;
+}
+.equipment-option:last-child {
+  border-bottom: 0;
+}
+.equipment-option > span:not(.badge) {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.equipment-option strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+}
+.equipment-option small {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.equipment-option:has(input:disabled) {
+  cursor: default;
+}
+.purpose-cell {
+  max-width: 220px;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 600px) {
+  .equipment-option {
+    flex-wrap: wrap;
+  }
+  .equipment-option > span:not(.badge) {
+    flex-basis: calc(100% - 40px);
+  }
+  .equipment-option .badge {
+    margin-left: 30px;
+  }
+  .purpose-cell {
+    max-width: none;
+  }
+}
+
 .auth-layout {
   min-height: 100svh;
   display: grid;
