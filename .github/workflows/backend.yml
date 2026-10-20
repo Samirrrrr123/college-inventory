@@ -95,6 +95,17 @@ jobs:
           CLIENT_ORIGIN: http://127.0.0.1:8080
           NODE_ENV: development
         run: docker compose up --build --detach --wait --wait-timeout 180
+      - name: Validate production deployment
+        env:
+          POSTGRES_PASSWORD: ci-compose-database-password
+          ACCESS_SECRET: ci-only-access-secret-with-at-least-32-characters
+          REFRESH_SECRET: ci-only-refresh-secret-with-at-least-32-characters
+          SEED_PASSWORD: ci-only-seed-password
+          PUBLIC_HOST: 203.0.113.10
+          ACME_EMAIL: ci@example.com
+        run: |
+          docker compose -f compose.yaml -f compose.production.yaml config --quiet
+          docker run --rm -e PUBLIC_HOST -e ACME_EMAIL -v "$PWD/Caddyfile:/etc/caddy/Caddyfile:ro" caddy:2.10.2-alpine caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
       - name: Verify Compose through Nginx
         run: node backend/tests/compose-smoke.mjs
       - name: Stop Compose
