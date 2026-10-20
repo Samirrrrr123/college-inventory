@@ -39,7 +39,18 @@ test('all main screens fit the required viewport range', async ({ page }) => {
   page.on('pageerror', (error) => errors.push(error.message));
   for (const width of [360, 768, 1440, 1920]) {
     await page.setViewportSize({ width, height: 1000 });
-    for (const path of ['/', '/equipment', '/requests', '/rooms', '/administration', '/profile']) {
+    for (const path of [
+      '/',
+      '/equipment',
+      '/requests',
+      '/rooms',
+      '/administration',
+      '/profile',
+      '/login',
+      '/register',
+      '/forgot-password',
+      '/reset-password?token=example-reset-code',
+    ]) {
       await page.goto(path);
       await expect(page.locator('h1')).toBeVisible();
       await expect
@@ -48,4 +59,32 @@ test('all main screens fit the required viewport range', async ({ page }) => {
     }
   }
   expect(errors).toEqual([]);
+});
+
+test('public forms validate data and keep the demo separate from signing in', async ({ page }) => {
+  await page.goto('/login');
+  await page.getByRole('button', { name: 'Войти', exact: true }).click();
+  await expect(page.getByLabel('Email')).toBeFocused();
+  await page.getByRole('link', { name: 'Нет аккаунта? Зарегистрироваться →' }).click();
+  await page.getByLabel('Имя', { exact: true }).fill('Анна');
+  await page.getByLabel('Email').fill('anna@college.test');
+  await page.getByLabel('Пароль', { exact: true }).fill('Example-123');
+  await page.getByLabel('Повторите пароль', { exact: true }).fill('Different-123');
+  await page.getByRole('button', { name: 'Создать аккаунт', exact: true }).click();
+  await expect(page.getByText('Пароли не совпадают')).toBeVisible();
+  await page.getByLabel('Повторите пароль', { exact: true }).fill('Example-123');
+  await page.getByRole('button', { name: 'Создать аккаунт', exact: true }).click();
+  await expect(page.getByRole('status')).toContainText('операция не выполнена');
+  await expect(page.getByLabel('Пароль', { exact: true })).toHaveValue('');
+  await expect(page).toHaveURL(/\/register$/);
+  await page.getByRole('button', { name: 'Язык интерфейса' }).click();
+  await page.getByRole('button', { name: 'Appearance', exact: true }).click();
+  await page.setViewportSize({ width: 360, height: 900 });
+  await expect(page.getByRole('heading', { name: 'Create an account' })).toBeVisible();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth))
+    .toBe(true);
+  await page.getByRole('link', { name: 'Explore the demo →' }).click();
+  await expect(page.getByRole('heading', { name: 'Overview', exact: true })).toBeVisible();
 });
