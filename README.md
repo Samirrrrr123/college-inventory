@@ -55,6 +55,7 @@ pnpm --dir frontend test:e2e
 - [Макеты Figma](https://www.figma.com/design/jIVQxAXjthCzGjexpRL1J6)
 - [Пользовательские истории](docs/user-stories.md)
 - [Задачи GitHub](https://github.com/Samirrrrr123/college-inventory/issues)
+- [Доска задач](https://github.com/users/Samirrrrr123/projects/1/views/1)
 - [Информация для интеграции frontend](docs/frontend-handoff.md)
 - [Черновик договорённостей по API](docs/api-proposal.md)
 
