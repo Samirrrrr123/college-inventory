@@ -1,5 +1,4 @@
 {
-	email {$ACME_EMAIL}
 	default_sni {$PUBLIC_HOST}
 }
 

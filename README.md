@@ -41,15 +41,15 @@ docker compose up --build
 
 ## Публикация на VPS
 
-Для VPS с публичным IPv4 откройте входящие TCP-порты 22, 80, 443 и UDP-порт 443. Создайте локальную конфигурацию и добавьте в `.env` публичный IP и email для уведомлений о сертификате:
+Для VPS с публичным IPv4 откройте входящие TCP-порты 22, 80, 443 и UDP-порт 443. Создайте локальную конфигурацию и добавьте в `.env` публичный IP:
 
 ```sh
 node scripts/setup-env.mjs
-printf '\nPUBLIC_HOST=203.0.113.10\nACME_EMAIL=admin@example.com\n' >> .env
+printf '\nPUBLIC_HOST=203.0.113.10\n' >> .env
 docker compose -f compose.yaml -f compose.production.yaml up --build --detach --wait
 ```
 
-Вместо примеров указываются настоящий IP и email. Production-конфигурация запускает Caddy перед приложением, получает короткоживущий сертификат Let’s Encrypt для IP и автоматически продлевает его. Приложение открывается по `https://PUBLIC_HOST`; HTTP перенаправляется на HTTPS. Секреты остаются только в `.env` на сервере.
+Вместо примера указывается настоящий IP. Production-конфигурация запускает Caddy перед приложением, получает короткоживущий сертификат Let’s Encrypt для IP и автоматически продлевает его. Приложение открывается по `https://PUBLIC_HOST`; HTTP перенаправляется на HTTPS. Секреты остаются только в `.env` на сервере.
 
 ## Запуск frontend
 

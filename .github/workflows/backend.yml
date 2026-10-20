@@ -102,10 +102,9 @@ jobs:
           REFRESH_SECRET: ci-only-refresh-secret-with-at-least-32-characters
           SEED_PASSWORD: ci-only-seed-password
           PUBLIC_HOST: 203.0.113.10
-          ACME_EMAIL: ci@example.com
         run: |
           docker compose -f compose.yaml -f compose.production.yaml config --quiet
-          docker run --rm -e PUBLIC_HOST -e ACME_EMAIL -v "$PWD/Caddyfile:/etc/caddy/Caddyfile:ro" caddy:2.10.2-alpine caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
+          docker run --rm -e PUBLIC_HOST -v "$PWD/Caddyfile:/etc/caddy/Caddyfile:ro" caddy:2.10.2-alpine caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
       - name: Verify Compose through Nginx
         run: node backend/tests/compose-smoke.mjs
       - name: Stop Compose
