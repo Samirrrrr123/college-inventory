@@ -102,6 +102,15 @@ export function AccountPage() {
     signedIn: t('activitySignedIn'),
     profileUpdated: t('activityProfileUpdated'),
     passwordChanged: t('activityPasswordChanged'),
+    equipmentCreated: `${t('equipment')}: ${t('created')}`,
+    equipmentUpdated: `${t('equipment')}: ${t('updated')}`,
+    equipmentDeleted: `${t('equipment')}: ${t('deleted')}`,
+    categoryCreated: `${t('category')}: ${t('created')}`,
+    categoryUpdated: `${t('category')}: ${t('updated')}`,
+    categoryDeleted: `${t('category')}: ${t('deleted')}`,
+    roomCreated: `${t('room')}: ${t('created')}`,
+    roomUpdated: `${t('room')}: ${t('updated')}`,
+    roomDeleted: `${t('room')}: ${t('deleted')}`,
   };
 
   return (
@@ -191,7 +200,10 @@ export function AccountPage() {
           )}
         </>
       )}
-      <p className="muted small-text">{t('inventoryPending')}</p>
+      <Link className="button button--primary" to="/app/equipment">
+        {t('catalogAccess')}
+      </Link>
+      <p className="muted small-text">{t('operationsPending')}</p>
       <Link className="auth-next-link" to="/">
         {t('openDemo')} →
       </Link>

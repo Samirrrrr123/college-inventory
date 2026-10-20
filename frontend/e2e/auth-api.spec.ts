@@ -20,7 +20,8 @@ test.describe('Accounts with the real API', () => {
     await page.getByLabel('Email').fill(email);
     await page.getByLabel('Пароль', { exact: true }).fill(password);
     await page.getByRole('button', { name: 'Войти', exact: true }).click();
-    await expect(page).toHaveURL(/\/account$/u);
+    await expect(page).toHaveURL(/\/app\/equipment$/u);
+    await page.getByRole('link', { name: 'Личный кабинет', exact: true }).click();
     await expect(page.getByLabel('Имя', { exact: true })).toHaveValue('Тестовый преподаватель');
     await expect(page.getByText('Преподаватель', { exact: true })).toBeVisible();
     await page.reload();
@@ -69,6 +70,7 @@ test.describe('Accounts with the real API', () => {
     await page.getByLabel('Email').fill(email);
     await page.getByLabel('Пароль', { exact: true }).fill(oldPassword);
     await page.getByRole('button', { name: 'Войти', exact: true }).click();
+    await page.getByRole('link', { name: 'Личный кабинет', exact: true }).click();
     await expect(page.getByRole('heading', { name: 'Мой аккаунт', exact: true })).toBeVisible();
     await page.getByRole('button', { name: 'Изменить пароль', exact: true }).click();
     const dialog = page.getByRole('dialog');
@@ -83,6 +85,7 @@ test.describe('Accounts with the real API', () => {
     await expect(page.getByText('Неверный email или пароль.', { exact: true })).toBeVisible();
     await page.getByLabel('Пароль', { exact: true }).fill(newPassword);
     await page.getByRole('button', { name: 'Войти', exact: true }).click();
+    await page.getByRole('link', { name: 'Личный кабинет', exact: true }).click();
     await expect(page.getByLabel('Email')).toHaveValue(email);
   });
 });

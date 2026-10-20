@@ -1,4 +1,4 @@
-import { Link, Route, Routes } from 'react-router';
+import { Link, Navigate, Route, Routes } from 'react-router';
 import { Layout } from './Layout';
 import { OverviewPage } from '../pages/OverviewPage';
 import { EquipmentPage } from '../features/equipment/EquipmentPage';
@@ -10,6 +10,9 @@ import { usePreferences } from './Preferences';
 import { AuthLayout } from '../features/auth/AuthLayout';
 import { AuthPage } from '../features/auth/AuthPage';
 import { AccountPage } from '../features/auth/AccountPage';
+import { LiveLayout } from './LiveLayout';
+import { CatalogEquipmentPage } from '../features/catalog/CatalogEquipmentPage';
+import { CatalogDirectoriesPage } from '../features/catalog/CatalogDirectoriesPage';
 
 function NotFoundPage() {
   const { t } = usePreferences();
@@ -26,6 +29,16 @@ function NotFoundPage() {
 export function App() {
   return (
     <Routes>
+      <Route path="app" element={<LiveLayout />}>
+        <Route index element={<Navigate to="equipment" replace />} />
+        <Route path="equipment" element={<CatalogEquipmentPage />} />
+        <Route path="rooms" element={<CatalogDirectoriesPage key="rooms" kind="rooms" />} />
+        <Route
+          path="categories"
+          element={<CatalogDirectoriesPage key="categories" kind="categories" />}
+        />
+        <Route path="*" element={<NotFoundPage />} />
+      </Route>
       <Route element={<AuthLayout />}>
         <Route path="login" element={<AuthPage key="login" mode="login" />} />
         <Route path="register" element={<AuthPage key="register" mode="register" />} />

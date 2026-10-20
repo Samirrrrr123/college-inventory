@@ -1,4 +1,51 @@
 export const messages = {
+  liveCatalog: ['Рабочий каталог', 'Live catalog'],
+  liveSaved: ['Изменения сохранены', 'Changes saved'],
+  liveDeleted: ['Запись удалена', 'Record deleted'],
+  refreshList: ['Обновить список', 'Refresh list'],
+  categoriesSubtitle: ['Категории оборудования', 'Equipment categories'],
+  sortBy: ['Сортировать по', 'Sort by'],
+  liveCatalogNote: [
+    'Изменения оборудования и справочников сохраняются.',
+    'Equipment and directory changes are saved.',
+  ],
+  directoryDuplicate: [
+    'Такое название или номер в этом корпусе уже используются.',
+    'This name or room number in the building is already in use.',
+  ],
+  relatedRecords: [
+    'Запись связана с оборудованием или историей. Удаление недоступно.',
+    'This record is linked to equipment or history and cannot be deleted.',
+  ],
+  issuedCannotChange: [
+    'Сначала оформите возврат оборудования.',
+    'Return this equipment before changing its room or status.',
+  ],
+  concurrentChange: [
+    'Запись была изменена. Обновите список и повторите действие.',
+    'The record has changed. Refresh the list and try again.',
+  ],
+  recordMissing: [
+    'Запись больше не существует. Обновите список.',
+    'This record no longer exists. Refresh the list.',
+  ],
+  building: ['Корпус', 'Building'],
+  floor: ['Этаж', 'Floor'],
+  invalidFloor: ['Укажите целый этаж от −5 до 100.', 'Enter a whole floor number from −5 to 100.'],
+  referencesRequired: [
+    'Сначала добавьте хотя бы одну категорию и аудиторию.',
+    'Add at least one category and room first.',
+  ],
+  catalogAccess: ['Открыть рабочий каталог', 'Open the live catalog'],
+  uploadNotReady: [
+    'Загрузка файлов появится после подключения хранилища.',
+    'File uploads will be available after storage is connected.',
+  ],
+  operationsPending: [
+    'Заявки, выдачи и инвентаризация пока доступны отдельно в демоверсии.',
+    'Requests, loans and inventory checks are currently available separately in the demo.',
+  ],
+  description: ['Описание', 'Description'],
   accountTitle: ['Мой аккаунт', 'My account'],
   accountDescription: [
     'Данные аккаунта сохраняются на сервере.',
@@ -428,8 +475,8 @@ export const messages = {
   signInLink: ['Уже есть аккаунт? Войти', 'Already have an account? Sign in'],
   backToSignIn: ['Вернуться ко входу', 'Back to sign in'],
   authPreviewNote: [
-    'Вход и аккаунты работают с сервером. Каталог оборудования пока можно посмотреть отдельно в деморежиме.',
-    'Sign-in and accounts use the server. Equipment is currently available separately in the demo.',
+    'После входа доступны каталог оборудования, аудитории и категории с сохранением изменений.',
+    'Sign in to access equipment, rooms and categories with saved changes.',
   ],
   openDemo: ['Посмотреть демоверсию', 'Explore the demo'],
   authUnavailable: [

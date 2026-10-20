@@ -96,7 +96,7 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
     try {
       if (mode === 'login') {
         await signIn(values.email.trim(), values.password);
-        navigate('/account');
+        navigate('/app/equipment');
       } else if (mode === 'register') {
         await publicApi('/auth/register', {
           name: values.name.trim(),

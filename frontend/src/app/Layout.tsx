@@ -5,6 +5,7 @@ import { useDemo } from '../demo/DemoProvider';
 import { Icon } from '../components/Icon';
 import type { IconName } from '../components/Icon';
 import type { MessageKey } from '../i18n/messages';
+import type { Person } from '../domain/types';
 
 const navigation: { path: string; label: MessageKey; icon: IconName; adminOnly?: boolean }[] = [
   { path: '/', label: 'overview', icon: 'overview' },
@@ -15,9 +16,20 @@ const navigation: { path: string; label: MessageKey; icon: IconName; adminOnly?:
   { path: '/profile', label: 'profile', icon: 'profile' },
 ];
 
-export function Layout() {
+export function Layout({ livePerson }: { livePerson?: Person }) {
   const { t, language, setLanguage, theme, setTheme, date } = usePreferences();
-  const { person, setPersonId, people } = useDemo();
+  const { person: demoPerson, setPersonId, people } = useDemo();
+  const person = livePerson ?? demoPerson;
+  const home = livePerson ? '/app/equipment' : '/';
+  const profile = livePerson ? '/account' : '/profile';
+  const items = livePerson
+    ? [
+        { path: '/app/equipment', label: 'equipment' as const, icon: 'equipment' as const },
+        { path: '/app/rooms', label: 'rooms' as const, icon: 'rooms' as const },
+        { path: '/app/categories', label: 'categories' as const, icon: 'administration' as const },
+        { path: '/account', label: 'profile' as const, icon: 'profile' as const },
+      ]
+    : navigation.filter((item) => !item.adminOnly || person.role === 'ADMIN');
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
   const roleLabel =
@@ -41,10 +53,10 @@ export function Layout() {
         >
           <Icon name="menu" />
         </button>
-        <Link to="/" className="brand">
+        <Link to={home} className="brand">
           {t('brand')}
         </Link>
-        <Link to="/profile" aria-label={t('profile')}>
+        <Link to={profile} aria-label={t('profile')}>
           <Icon name="mobileUser" />
         </Link>
       </header>
@@ -58,35 +70,33 @@ export function Layout() {
       )}
       <aside className={`sidebar ${menuOpen ? 'sidebar--open' : ''}`}>
         <div className="sidebar-brand">
-          <Link to="/" className="brand" onClick={() => setMenuOpen(false)}>
+          <Link to={home} className="brand" onClick={() => setMenuOpen(false)}>
             {t('brand')}
           </Link>
           <p>{t('collegeEquipment')}</p>
         </div>
         <nav aria-label={t('menu')}>
-          {navigation
-            .filter((item) => !item.adminOnly || person.role === 'ADMIN')
-            .map((item) => (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                end={item.path === '/'}
-                onClick={() => setMenuOpen(false)}
-              >
-                {({ isActive }) => (
-                  <>
-                    <Icon name={item.icon} active={isActive} />
-                    <span>{t(item.label)}</span>
-                  </>
-                )}
-              </NavLink>
-            ))}
+          {items.map((item) => (
+            <NavLink
+              key={item.path}
+              to={item.path}
+              end={item.path === '/'}
+              onClick={() => setMenuOpen(false)}
+            >
+              {({ isActive }) => (
+                <>
+                  <Icon name={item.icon} active={isActive} />
+                  <span>{t(item.label)}</span>
+                </>
+              )}
+            </NavLink>
+          ))}
         </nav>
         <div className="sidebar-account">
           <strong>{person.name}</strong>
           <span>{roleLabel}</span>
-          <Link className="sidebar-login" to="/login">
-            {t('signInTitle')} →
+          <Link className="sidebar-login" to={livePerson ? '/account' : '/login'}>
+            {t(livePerson ? 'accountTitle' : 'signInTitle')} →
           </Link>
           <div className="sidebar-preferences">
             <button
@@ -114,21 +124,25 @@ export function Layout() {
         <Outlet />
         <footer className="demo-bar">
           <div>
-            <strong>{t('demo')}</strong>
-            <span>{t('demoNote')}</span>
+            <strong>{t(livePerson ? 'liveCatalog' : 'demo')}</strong>
+            <span>{t(livePerson ? 'liveCatalogNote' : 'demoNote')}</span>
           </div>
-          <label>
-            {t('demoRole')}
-            <select value={person.id} onChange={(event) => setPersonId(event.target.value)}>
-              {people
-                .filter((item) => !item.blocked)
-                .map((item) => (
-                  <option key={item.id} value={item.id}>
-                    {item.name}
-                  </option>
-                ))}
-            </select>
-          </label>
+          {livePerson ? (
+            <Link to="/">{t('openDemo')} →</Link>
+          ) : (
+            <label>
+              {t('demoRole')}
+              <select value={person.id} onChange={(event) => setPersonId(event.target.value)}>
+                {people
+                  .filter((item) => !item.blocked)
+                  .map((item) => (
+                    <option key={item.id} value={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
+              </select>
+            </label>
+          )}
         </footer>
       </main>
     </div>
