@@ -2,6 +2,7 @@ services:
   backend:
     environment:
       NODE_ENV: production
+      TRUST_PROXY_HOPS: 2
       CLIENT_ORIGIN: https://${PUBLIC_HOST:?Set PUBLIC_HOST in .env}
   caddy:
     image: caddy:2.10.2-alpine
