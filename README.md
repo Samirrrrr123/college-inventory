@@ -64,6 +64,7 @@ docker compose -f compose.yaml -f compose.production.yaml up --build --detach --
 
 GitHub Actions запускает проверки кода, тесты, сборку и Docker Compose. Результаты и проверенные сценарии — в отчёте ниже.
 
+- [Общая документация и отчёт о проверках (PDF)](docs/project-documentation.pdf)
 - [Макеты Figma](https://www.figma.com/design/jIVQxAXjthCzGjexpRL1J6)
 - [Пользовательские истории и критерии приёмки](docs/user-stories.md)
 - [Архитектура и ER-диаграмма](docs/architecture.md)
