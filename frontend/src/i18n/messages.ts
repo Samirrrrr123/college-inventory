@@ -1,4 +1,18 @@
 export const messages = {
+  dashboardSubtitle: [
+    'Оборудование, заявки и выдачи на текущий момент',
+    'Current equipment, requests and loans',
+  ],
+  dashboardSummary: ['Сводка', 'Summary'],
+  dashboardOwn: [
+    'Заявки и выдачи — только ваши. Оборудование — весь фонд колледжа.',
+    'Requests and loans are yours only. Equipment covers the college inventory.',
+  ],
+  dashboardAll: [
+    'Заявки и выдачи всех пользователей, оборудование всего колледжа.',
+    'Requests and loans for all users and equipment across the college.',
+  ],
+  dashboardUpdated: ['Обновлено:', 'Updated:'],
   historyMovementsSubtitle: [
     'История изменения аудиторий оборудования',
     'Equipment room change history',

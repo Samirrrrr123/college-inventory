@@ -3,6 +3,7 @@ import { circulationPaths, circulationSchemas } from './circulation/openapi.js';
 import { filePaths } from './files/openapi.js';
 import { inventoryPaths } from './inventory/openapi.js';
 import { historyPaths, historySchemas } from './history/openapi.js';
+import { dashboardPaths } from './dashboard/openapi.js';
 const string = { type: 'string' };
 const password = { type: 'string', minLength: 8, maxLength: 72, format: 'password' };
 const profile = {
@@ -73,7 +74,7 @@ export const openapi = {
     title: 'Инвентарь — API',
     version: '0.3.0',
     description:
-      'Accounts, catalog, requests, loans, files, inventory checks, user access management, movement history and administrator audit. Dashboard and exports are separate work. Reset links are printed in server logs for the educational assignment.',
+      'Accounts, catalog, requests, loans, files, inventory checks, user access management, movement history, administrator audit and dashboard. Exports are separate work. Reset links are printed in server logs for the educational assignment.',
   },
   servers: [{ url: '/api' }],
   components: {
@@ -109,6 +110,7 @@ export const openapi = {
     ...filePaths,
     ...inventoryPaths,
     ...historyPaths,
+    ...dashboardPaths,
     '/health': {
       get: {
         summary: 'Database readiness',
