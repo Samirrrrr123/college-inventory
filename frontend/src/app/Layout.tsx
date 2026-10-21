@@ -25,6 +25,7 @@ export function Layout({ livePerson }: { livePerson?: Person }) {
   const items = livePerson
     ? [
         { path: '/app/equipment', label: 'equipment' as const, icon: 'equipment' as const },
+        { path: '/app/requests', label: 'requests' as const, icon: 'requests' as const },
         { path: '/app/rooms', label: 'rooms' as const, icon: 'rooms' as const },
         { path: '/app/categories', label: 'categories' as const, icon: 'administration' as const },
         { path: '/account', label: 'profile' as const, icon: 'profile' as const },

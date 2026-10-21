@@ -13,6 +13,7 @@ import { AccountPage } from '../features/auth/AccountPage';
 import { LiveLayout } from './LiveLayout';
 import { CatalogEquipmentPage } from '../features/catalog/CatalogEquipmentPage';
 import { CatalogDirectoriesPage } from '../features/catalog/CatalogDirectoriesPage';
+import { LiveRequestsPage } from '../features/circulation/LiveRequestsPage';
 
 function NotFoundPage() {
   const { t } = usePreferences();
@@ -32,6 +33,7 @@ export function App() {
       <Route path="app" element={<LiveLayout />}>
         <Route index element={<Navigate to="equipment" replace />} />
         <Route path="equipment" element={<CatalogEquipmentPage />} />
+        <Route path="requests" element={<LiveRequestsPage />} />
         <Route path="rooms" element={<CatalogDirectoriesPage key="rooms" kind="rooms" />} />
         <Route
           path="categories"

@@ -18,6 +18,12 @@ const keys: Record<string, MessageKey> = {
   RELATED_RECORDS: 'relatedRecords',
   EQUIPMENT_ISSUED: 'issuedCannotChange',
   CONCURRENT_CHANGE: 'concurrentChange',
+  EQUIPMENT_UNAVAILABLE: 'equipmentUnavailable',
+  INVALID_TRANSITION: 'invalidTransition',
+  ALREADY_ISSUED: 'alreadyIssued',
+  INVALID_DUE_DATE: 'invalidDueDate',
+  INVALID_RECIPIENT: 'invalidRecipient',
+  ALREADY_RETURNED: 'returnAlreadyRecorded',
   NOT_FOUND: 'recordMissing',
 };
 

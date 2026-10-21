@@ -13,6 +13,7 @@ import { authController } from './auth/controller.js';
 import { ApiError } from './errors.js';
 import { openapi } from './openapi.js';
 import { catalogController } from './catalog/controller.js';
+import { circulationController } from './circulation/controller.js';
 
 export function createApp(service: AuthService, config: Config) {
   const app = express();
@@ -53,6 +54,7 @@ export function createApp(service: AuthService, config: Config) {
   app.get('/api/openapi.json', (_req, res) => res.json(openapi));
   app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(openapi));
   app.use('/api', catalogController(service));
+  app.use('/api', circulationController(service));
   app.use('/api', authController(service, config));
   app.use((_req, _res, next) => next(new ApiError(404, 'NOT_FOUND', 'Resource not found')));
   const handleError: ErrorRequestHandler = (error: unknown, _req, res, _next) => {

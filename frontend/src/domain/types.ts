@@ -2,7 +2,7 @@ export type Language = 'ru' | 'en';
 export type Theme = 'light' | 'dark' | 'system';
 export type Role = 'ADMIN' | 'LAB_ASSISTANT' | 'TEACHER';
 export type EquipmentStatus = 'AVAILABLE' | 'ISSUED' | 'MAINTENANCE' | 'WRITTEN_OFF';
-export type RequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED';
+export type RequestStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED';
 export type LocalizedText = { ru: string; en: string };
 
 export interface Person {
