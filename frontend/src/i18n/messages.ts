@@ -1,4 +1,10 @@
 export const messages = {
+  exportXlsx: ['Скачать XLSX', 'Download XLSX'],
+  exportingXlsx: ['Подготовка XLSX…', 'Preparing XLSX…'],
+  exportLimit: [
+    'В выборке больше 5000 предметов. Уточните фильтры.',
+    'More than 5000 items match. Narrow down the filters.',
+  ],
   dashboardSubtitle: [
     'Оборудование, заявки и выдачи на текущий момент',
     'Current equipment, requests and loans',

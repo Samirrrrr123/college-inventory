@@ -18,6 +18,7 @@ import { fileController } from './files/controller.js';
 import { inventoryController } from './inventory/controller.js';
 import { userController } from './users/controller.js';
 import { dashboardController } from './dashboard/controller.js';
+import { reportController } from './reports/controller.js';
 import { historyController } from './history/controller.js';
 
 export function createApp(service: AuthService, config: Config) {
@@ -58,6 +59,7 @@ export function createApp(service: AuthService, config: Config) {
   });
   app.get('/api/openapi.json', (_req, res) => res.json(openapi));
   app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(openapi));
+  app.use('/api', reportController(service));
   app.use('/api', catalogController(service));
   app.use('/api', circulationController(service));
   app.use('/api', fileController(service));
