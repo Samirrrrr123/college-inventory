@@ -24,6 +24,7 @@ export function Layout({ livePerson }: { livePerson?: Person }) {
   const profile = livePerson ? '/account' : '/profile';
   const items = livePerson
     ? [
+        { path: '/app/overview', label: 'overview' as const, icon: 'overview' as const },
         { path: '/app/equipment', label: 'equipment' as const, icon: 'equipment' as const },
         { path: '/app/requests', label: 'requests' as const, icon: 'requests' as const },
         ...(person.role !== 'TEACHER'

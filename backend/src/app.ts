@@ -17,6 +17,7 @@ import { circulationController } from './circulation/controller.js';
 import { fileController } from './files/controller.js';
 import { inventoryController } from './inventory/controller.js';
 import { userController } from './users/controller.js';
+import { dashboardController } from './dashboard/controller.js';
 import { historyController } from './history/controller.js';
 
 export function createApp(service: AuthService, config: Config) {
@@ -62,6 +63,7 @@ export function createApp(service: AuthService, config: Config) {
   app.use('/api', fileController(service));
   app.use('/api', inventoryController(service));
   app.use('/api', userController(service));
+  app.use('/api', dashboardController(service));
   app.use('/api', historyController(service));
   app.use('/api', authController(service, config));
   app.use((_req, _res, next) => next(new ApiError(404, 'NOT_FOUND', 'Resource not found')));
