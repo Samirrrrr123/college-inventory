@@ -2,6 +2,7 @@ import { catalogPaths, catalogSchemas } from './catalog/openapi.js';
 import { circulationPaths, circulationSchemas } from './circulation/openapi.js';
 import { filePaths } from './files/openapi.js';
 import { inventoryPaths } from './inventory/openapi.js';
+import { historyPaths, historySchemas } from './history/openapi.js';
 const string = { type: 'string' };
 const password = { type: 'string', minLength: 8, maxLength: 72, format: 'password' };
 const profile = {
@@ -69,10 +70,10 @@ const pagination = ['page', 'pageSize'].map((name) => ({
 export const openapi = {
   openapi: '3.0.3',
   info: {
-    title: 'Инвентарь — API аккаунтов и каталога',
-    version: '0.2.0',
+    title: 'Инвентарь — API',
+    version: '0.3.0',
     description:
-      'Accounts, sessions, equipment, categories and rooms are implemented. Loans, uploads and exports are not implemented in this stage. Reset links are printed in server logs for the educational assignment.',
+      'Accounts, catalog, requests, loans, files, inventory checks, user access management, movement history and administrator audit. Dashboard and exports are separate work. Reset links are printed in server logs for the educational assignment.',
   },
   servers: [{ url: '/api' }],
   components: {
@@ -84,6 +85,7 @@ export const openapi = {
       User: user,
       ...catalogSchemas,
       ...circulationSchemas,
+      ...historySchemas,
       Error: {
         type: 'object',
         required: ['error'],
@@ -106,6 +108,7 @@ export const openapi = {
     ...circulationPaths,
     ...filePaths,
     ...inventoryPaths,
+    ...historyPaths,
     '/health': {
       get: {
         summary: 'Database readiness',
