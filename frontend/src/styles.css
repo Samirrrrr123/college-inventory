@@ -1960,3 +1960,35 @@ body:has(dialog[open]) {
   padding: 16px 0;
   margin-bottom: 12px;
 }
+
+.history-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0 0 16px;
+}
+
+.history-filters .field {
+  min-width: 0;
+}
+
+.history-table td {
+  overflow-wrap: anywhere;
+}
+
+.history-table td > div,
+.history-table details {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.history-table pre {
+  max-width: 360px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+}
+
+.history-table summary {
+  cursor: pointer;
+}
