@@ -16,6 +16,7 @@ import { catalogController } from './catalog/controller.js';
 
 export function createApp(service: AuthService, config: Config) {
   const app = express();
+  app.set('trust proxy', config.TRUST_PROXY_HOPS);
   app.disable('x-powered-by');
   app.use(helmet());
   app.use(cors({ origin: config.CLIENT_ORIGIN, credentials: true }));
