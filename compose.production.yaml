@@ -1,0 +1,24 @@
+services:
+  backend:
+    environment:
+      NODE_ENV: production
+      CLIENT_ORIGIN: https://${PUBLIC_HOST:?Set PUBLIC_HOST in .env}
+  caddy:
+    image: caddy:2.10.2-alpine
+    environment:
+      PUBLIC_HOST: ${PUBLIC_HOST:?Set PUBLIC_HOST in .env}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      frontend:
+        condition: service_healthy
+    restart: unless-stopped
+volumes:
+  caddy_data:
+  caddy_config:

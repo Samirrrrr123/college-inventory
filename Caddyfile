@@ -1,0 +1,12 @@
+{
+	default_sni {$PUBLIC_HOST}
+}
+
+{$PUBLIC_HOST} {
+	tls {
+		issuer acme {
+			profile shortlived
+		}
+	}
+	reverse_proxy frontend:8080
+}

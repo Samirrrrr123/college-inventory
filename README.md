@@ -39,7 +39,17 @@ docker compose up --build
 
 Тестовые аккаунты: `admin@college.test`, `technician@college.test`, `teacher@college.test`. Пароль задан в локальном `.env` как `SEED_PASSWORD`. Повторный seed сохраняет существующие пароли. Регистрация создаёт только преподавателя. База хранится в Docker volume.
 
-Для публикации нужны HTTPS, `NODE_ENV=production` и точный публичный `CLIENT_ORIGIN`; текущая конфигурация Compose предназначена для локального запуска.
+## Публикация на VPS
+
+Для VPS с публичным IPv4 откройте входящие TCP-порты 22, 80, 443 и UDP-порт 443. Создайте локальную конфигурацию и добавьте в `.env` публичный IP:
+
+```sh
+node scripts/setup-env.mjs
+printf '\nPUBLIC_HOST=203.0.113.10\n' >> .env
+docker compose -f compose.yaml -f compose.production.yaml up --build --detach --wait
+```
+
+Вместо примера указывается настоящий IP. Production-конфигурация запускает Caddy перед приложением, получает короткоживущий сертификат Let’s Encrypt для IP и автоматически продлевает его. Приложение открывается по `https://PUBLIC_HOST`; HTTP перенаправляется на HTTPS. Секреты остаются только в `.env` на сервере.
 
 ## Запуск frontend
 
