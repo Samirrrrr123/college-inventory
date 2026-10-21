@@ -20,22 +20,6 @@
 | US-14 | Как администратор, я хочу смотреть журнал действий и скачивать таблицу оборудования, чтобы проверять работу и готовить отчёты. | В журнале видны автор, действие и дата. В XLSX попадают все предметы с выбранными фильтрами, а не одна страница. Файл открывается как таблица. Доступ проверяет сервер.                           |
 | US-15 | Как пользователь, я хочу выбрать тему и язык, чтобы мне было удобно пользоваться сайтом.                                       | Есть светлая, тёмная и системная темы, русский и английский языки. Выбор сохраняется. Страницы работают на телефоне и компьютере, от 360 до 1920 пикселей.                                        |
 
-Самир занимается интерфейсом и запуском, Артём - серверной частью и базой данных. Самир также добавил часть серверных функций. Реальный вклад сохранён в коммитах и PR. Задачи находятся на [доске](kanban.md).
+Самир: Figma, основной интерфейс, интеграция, CI, VPS и часть API. Артём: API каталога и связанные таблицы, перемещения и аудит вместе с экранами и тестами. Работа при интеграции пересекалась.
 
-## Задачи GitHub
-
-- [US-01](https://github.com/Samirrrrr123/college-inventory/issues/3)
-- [US-02](https://github.com/Samirrrrr123/college-inventory/issues/4)
-- [US-03](https://github.com/Samirrrrr123/college-inventory/issues/5)
-- [US-04](https://github.com/Samirrrrr123/college-inventory/issues/6)
-- [US-05](https://github.com/Samirrrrr123/college-inventory/issues/7)
-- [US-06](https://github.com/Samirrrrr123/college-inventory/issues/8)
-- [US-07](https://github.com/Samirrrrr123/college-inventory/issues/9)
-- [US-08](https://github.com/Samirrrrr123/college-inventory/issues/10)
-- [US-09](https://github.com/Samirrrrr123/college-inventory/issues/11)
-- [US-10](https://github.com/Samirrrrr123/college-inventory/issues/12)
-- [US-11](https://github.com/Samirrrrr123/college-inventory/issues/13)
-- [US-12](https://github.com/Samirrrrr123/college-inventory/issues/14)
-- [US-13](https://github.com/Samirrrrr123/college-inventory/issues/15)
-- [US-14](https://github.com/Samirrrrr123/college-inventory/issues/16)
-- [US-15](https://github.com/Samirrrrr123/college-inventory/issues/17)
+[Задачи GitHub](https://github.com/Samirrrrr123/college-inventory/issues) · [Доска](kanban.md)
