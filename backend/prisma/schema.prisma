@@ -31,6 +31,7 @@ model User {
   borrowed     Loan[] @relation("Recipient")
   issuedLoans  Loan[] @relation("Issuer")
   returnedLoans Loan[] @relation("Returner")
+  attachments Attachment[]
 
   @@index([roleId])
   @@index([name])
@@ -114,6 +115,7 @@ model Equipment {
   movements       Movement[]
   requestItems    RequestItem[]
   loanItems       LoanItem[]
+  attachments     Attachment[]
 
   @@index([categoryId])
   @@index([roomId])
@@ -206,4 +208,20 @@ model LoanItem {
 
   @@id([loanId, equipmentId])
   @@index([equipmentId])
+}
+
+model Attachment {
+  id           String @id @default(uuid()) @db.Uuid
+  equipmentId  String @db.Uuid
+  uploadedById String @db.Uuid
+  name         String @db.VarChar(160)
+  contentType  String @db.VarChar(40)
+  size         Int
+  content      Bytes
+  createdAt    DateTime @default(now())
+  equipment    Equipment @relation(fields: [equipmentId], references: [id], onDelete: NoAction)
+  uploadedBy   User @relation(fields: [uploadedById], references: [id], onDelete: NoAction)
+
+  @@index([equipmentId, createdAt])
+  @@index([uploadedById])
 }

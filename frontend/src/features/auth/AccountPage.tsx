@@ -108,6 +108,8 @@ export function AccountPage() {
     requestCancelled: t('activityRequestCancelled'),
     loanIssued: t('activityLoanIssued'),
     loanReturned: t('activityLoanReturned'),
+    fileUploaded: t('fileUploaded'),
+    fileDeleted: t('fileDeleted'),
     equipmentCreated: `${t('equipment')}: ${t('created')}`,
     equipmentUpdated: `${t('equipment')}: ${t('updated')}`,
     equipmentDeleted: `${t('equipment')}: ${t('deleted')}`,
