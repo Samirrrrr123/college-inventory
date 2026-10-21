@@ -182,7 +182,7 @@ const decision = {
 };
 export const circulationSchemas = { EquipmentRequest: request, Loan: loan };
 export const circulationPaths = {
-  '/api/requests': {
+  '/requests': {
     get: {
       ...list(
         request,
@@ -204,31 +204,31 @@ export const circulationPaths = {
       false,
     ),
   },
-  '/api/requests/{id}': {
+  '/requests/{id}': {
     get: {
       summary: 'Read request; foreign teacher requests return 404',
       parameters: [identifier],
       responses: { 200: response(single(request)), ...errors },
     },
   },
-  '/api/requests/{id}/approve': {
+  '/requests/{id}/approve': {
     post: mutate(
       'Staff: approve pending request without reserving equipment',
       decision,
       request,
     ),
   },
-  '/api/requests/{id}/reject': {
+  '/requests/{id}/reject': {
     post: mutate('Staff: reject pending request', decision, request),
   },
-  '/api/requests/{id}/cancel': {
+  '/requests/{id}/cancel': {
     post: mutate(
       'Cancel own pending or approved request before issuing; staff may cancel any',
       empty,
       request,
     ),
   },
-  '/api/loans': {
+  '/loans': {
     get: {
       ...list(loan, ['issuedAt', 'number', 'dueAt'], ['active', 'returned', 'overdue']),
       description:
@@ -262,21 +262,21 @@ export const circulationPaths = {
       false,
     ),
   },
-  '/api/loans/{id}': {
+  '/loans/{id}': {
     get: {
       summary: 'Read loan; foreign teacher loans return 404',
       parameters: [identifier],
       responses: { 200: response(single(loan)), ...errors },
     },
   },
-  '/api/loans/{id}/return': {
+  '/loans/{id}/return': {
     post: mutate(
       'Staff: return the entire set atomically; repeated returns fail',
       empty,
       loan,
     ),
   },
-  '/api/loan-recipients': {
+  '/loan-recipients': {
     get: {
       summary: 'Staff: search active recipients without exposing password hashes',
       parameters,

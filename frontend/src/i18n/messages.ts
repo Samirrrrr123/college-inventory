@@ -1,4 +1,19 @@
 export const messages = {
+  usersAccessSubtitle: [
+    'Роли пользователей и доступ к приложению',
+    'User roles and access to the application',
+  ],
+  editUserAccess: ['Изменить доступ', 'Edit access'],
+  accessChangeHint: [
+    'При изменении доступа текущие сессии пользователя будут закрыты.',
+    'Changing access signs the user out of all current sessions.',
+  ],
+  selfAccessHint: [
+    'Вы меняете собственный доступ. После сохранения нужно будет войти заново.',
+    'You are changing your own access. Sign in again after saving.',
+  ],
+  accessSaved: ['Доступ пользователя обновлён', 'User access updated'],
+  userAccessChanged: ['Доступ пользователя изменён', 'User access changed'],
   inventorySubtitle: [
     'Проверка оборудования по аудиториям и история результатов',
     'Room equipment checks and their results',
@@ -117,8 +132,8 @@ export const messages = {
     'File uploads will be available after storage is connected.',
   ],
   operationsPending: [
-    'Управление пользователями пока доступно отдельно в демоверсии.',
-    'User management is currently available separately in the demo.',
+    'Статистика, общий журнал и экспорт ещё подключаются.',
+    'Statistics, the shared activity log and export are still being connected.',
   ],
   description: ['Описание', 'Description'],
   accountTitle: ['Мой аккаунт', 'My account'],

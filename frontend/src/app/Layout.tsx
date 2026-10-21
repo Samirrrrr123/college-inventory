@@ -31,6 +31,9 @@ export function Layout({ livePerson }: { livePerson?: Person }) {
           : []),
         { path: '/app/rooms', label: 'rooms' as const, icon: 'rooms' as const },
         { path: '/app/categories', label: 'categories' as const, icon: 'administration' as const },
+        ...(person.role === 'ADMIN'
+          ? [{ path: '/app/users', label: 'users' as const, icon: 'administration' as const }]
+          : []),
         { path: '/account', label: 'profile' as const, icon: 'profile' as const },
       ]
     : navigation.filter((item) => !item.adminOnly || person.role === 'ADMIN');

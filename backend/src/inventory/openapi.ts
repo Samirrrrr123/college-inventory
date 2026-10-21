@@ -89,7 +89,7 @@ const paging = [
     schema: { type: 'string', enum: ['asc', 'desc'], default: 'desc' },
   },
 ];
-const root = '/api/inventory-checks';
+const root = '/inventory-checks';
 
 export const inventoryPaths = {
   [root]: {

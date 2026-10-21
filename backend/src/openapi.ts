@@ -255,18 +255,20 @@ export const openapi = {
         security: [{ bearerAuth: [] }],
         parameters: [
           ...pagination,
-          ...['search', 'role', 'sort', 'order'].map((name) => ({
+          ...['search', 'role', 'sort', 'order', 'status'].map((name) => ({
             in: 'query',
             name,
             schema: {
               type: 'string',
               ...(name === 'role'
                 ? { enum: ['teacher', 'technician', 'admin'] }
-                : name === 'sort'
-                  ? { enum: ['name', 'email'] }
-                  : name === 'order'
-                    ? { enum: ['asc', 'desc'] }
-                    : {}),
+                : name === 'status'
+                  ? { enum: ['active', 'blocked'] }
+                  : name === 'sort'
+                    ? { enum: ['name', 'email'] }
+                    : name === 'order'
+                      ? { enum: ['asc', 'desc'] }
+                      : {}),
             },
           })),
         ],
@@ -274,13 +276,65 @@ export const openapi = {
           200: response({
             type: 'object',
             properties: {
-              data: { type: 'array', items: user },
+              data: {
+                type: 'array',
+                items: {
+                  ...user,
+                  properties: { ...user.properties, isLastAdmin: { type: 'boolean' } },
+                },
+              },
               total: { type: 'integer' },
               page: { type: 'integer' },
               pageSize: { type: 'integer' },
             },
           }),
           ...errors,
+        },
+      },
+    },
+    '/users/{id}': {
+      patch: {
+        summary: 'Change role and blocking; administrators only',
+        description:
+          'Only role and isBlocked can be changed. The last active administrator cannot be demoted or blocked, including concurrent changes. Effective changes revoke all sessions and password-reset codes of the target user. Unblocking does not restore old sessions. The actor is checked again inside the transaction. Changes and audit are saved together.',
+        security: [{ bearerAuth: [] }],
+        parameters: [
+          {
+            name: 'id',
+            in: 'path',
+            required: true,
+            schema: { type: 'string', format: 'uuid' },
+          },
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                additionalProperties: false,
+                minProperties: 1,
+                properties: {
+                  role: { type: 'string', enum: ['teacher', 'technician', 'admin'] },
+                  isBlocked: { type: 'boolean' },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          200: response({
+            type: 'object',
+            properties: {
+              data: {
+                ...user,
+                properties: { ...user.properties, isLastAdmin: { type: 'boolean' } },
+              },
+            },
+          }),
+          ...errors,
+          404: { description: 'User not found' },
+          409: { description: 'LAST_ADMIN or CONCURRENT_CHANGE' },
         },
       },
     },
