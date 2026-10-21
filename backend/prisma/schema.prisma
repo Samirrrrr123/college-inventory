@@ -32,6 +32,8 @@ model User {
   issuedLoans  Loan[] @relation("Issuer")
   returnedLoans Loan[] @relation("Returner")
   attachments Attachment[]
+  startedChecks InventoryCheck[] @relation("CheckCreator")
+  completedChecks InventoryCheck[] @relation("CheckCompleter")
 
   @@index([roleId])
   @@index([name])
@@ -94,6 +96,7 @@ model Room {
   equipment   Equipment[]
   movementsIn Movement[]  @relation("MovementToRoom")
   movementsOut Movement[] @relation("MovementFromRoom")
+  inventoryChecks InventoryCheck[]
 
   @@unique([building, number])
   @@index([number])
@@ -116,6 +119,7 @@ model Equipment {
   requestItems    RequestItem[]
   loanItems       LoanItem[]
   attachments     Attachment[]
+  inventoryItems  InventoryItem[]
 
   @@index([categoryId])
   @@index([roomId])
@@ -224,4 +228,39 @@ model Attachment {
 
   @@index([equipmentId, createdAt])
   @@index([uploadedById])
+}
+
+model InventoryCheck {
+  id            String @id @default(uuid()) @db.Uuid
+  number        Int @unique @default(autoincrement())
+  roomId        String @db.Uuid
+  createdById   String @db.Uuid
+  completedById String? @db.Uuid
+  createdAt     DateTime @default(now())
+  completedAt   DateTime?
+  room          Room @relation(fields: [roomId], references: [id], onDelete: NoAction)
+  createdBy     User @relation("CheckCreator", fields: [createdById], references: [id], onDelete: NoAction)
+  completedBy   User? @relation("CheckCompleter", fields: [completedById], references: [id], onDelete: NoAction)
+  items         InventoryItem[]
+
+  @@index([roomId, createdAt])
+  @@index([createdById])
+  @@index([completedById])
+  @@index([completedAt])
+}
+
+model InventoryItem {
+  checkId         String @db.Uuid
+  equipmentId     String @db.Uuid
+  equipmentName   String @db.VarChar(200)
+  inventoryNumber String @db.VarChar(80)
+  statusAtStart   EquipmentStatus
+  found           Boolean?
+  checkedAt       DateTime?
+  check           InventoryCheck @relation(fields: [checkId], references: [id], onDelete: Cascade)
+  equipment       Equipment @relation(fields: [equipmentId], references: [id], onDelete: NoAction)
+
+  @@id([checkId, equipmentId])
+  @@index([equipmentId])
+  @@index([checkId, found])
 }

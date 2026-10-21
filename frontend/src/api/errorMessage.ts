@@ -2,6 +2,9 @@ import type { MessageKey } from '../i18n/messages';
 import { ApiError } from './client';
 
 const keys: Record<string, MessageKey> = {
+  NO_EQUIPMENT: 'noCheckEquipment',
+  CHECK_INCOMPLETE: 'checkIncomplete',
+  CHECK_COMPLETED: 'checkAlreadyCompleted',
   INVALID_FILE_TYPE: 'fileTypeError',
   INVALID_FILE_NAME: 'invalidFileName',
   EMPTY_FILE: 'emptyFile',
