@@ -1,6 +1,6 @@
 # Сервер: завершение и передача Самиру
 
-Дата: 21.10.2026. Ветка `feat/backend-completion`, основа — `main` на `73fbd38`.
+Дата: 21.10.2026. [PR #30](https://github.com/Samirrrrr123/college-inventory/pull/30). Ветка `feat/backend-completion`, основа — `main` на `73fbd38`.
 
 ## Что сделано
 
