@@ -16,10 +16,12 @@
 
 React, TypeScript strict, Vite, React Router, Tailwind CSS. API: Node.js и Express. БД: PostgreSQL и Prisma. Запуск: Docker Compose. Проверки: GitHub Actions, Vitest, Testing Library, Supertest и Playwright.
 
-- **Самир:** Figma, основной интерфейс, подключение API, мобильная версия, темы и языки, CI и VPS. Также API аккаунтов, заявок и выдач, файлов, инвентаризации, пользователей, обзора и XLSX.
-- **Артём:** API оборудования, категорий и аудиторий, связанные таблицы, миграции и тесты. API и экраны перемещений и журнала аудита.
+Первоначальные зоны ответственности:
 
-Работа при интеграции пересекалась. Фактические изменения сохранены в коммитах и PR. В презентации каждый читает пять слайдов.
+- **Ясинов Самир Парвизович, 4p1.23:** Figma, frontend, подключение API, тесты интерфейса, CI и размещение.
+- **Николаиди Артём Георгиевич, 4p1.23:** backend, REST API, PostgreSQL, миграции и серверные тесты.
+
+Интеграция и общие проверки — совместные. Фактические изменения сохранены в Git и PR. В презентации каждый читает пять слайдов.
 
 ## Запуск
 
@@ -50,7 +52,7 @@ docker compose -f compose.yaml -f compose.production.yaml up --build --detach --
 ## Материалы
 
 - [Общая документация PDF](docs/project-documentation.pdf)
-- [Презентация PowerPoint](docs/presentation.pptx) и [PDF](docs/presentation.pdf)
+- [Презентация PowerPoint](docs/presentation.pptx)
 - [15 пользовательских историй](docs/user-stories.md)
 - [Архитектура и схема БД](docs/architecture.md)
 - [Проверки и исправленные ошибки](docs/testing-report.md)
