@@ -29,6 +29,7 @@ flowchart LR
 - Выдача и возврат сохраняются целиком: ошибка по одному предмету отменяет всю операцию.
 - Повторно выдать занятую технику или принять тот же возврат нельзя.
 - Фото и PDF до 5 МБ хранятся в БД. Сервер проверяет тип, размер и права; скачивание требует входа.
+- Инвентаризация фиксирует состав аудитории при начале. Все предметы нужно отметить; после завершения ответы не меняются. Сама проверка не меняет статусы или расположение техники.
 - Все данные рабочих страниц постоянные. Отдельная демоверсия хранит изменения только до перезагрузки.
 - Темы и язык сохраняются в браузере, пароли и токены туда не записываются.
 
@@ -36,6 +37,11 @@ flowchart LR
 
 ```mermaid
 erDiagram
+    Room ||--o{ InventoryCheck : checked
+    User ||--o{ InventoryCheck : starts
+    User o|--o{ InventoryCheck : completes
+    InventoryCheck ||--|{ InventoryItem : includes
+    Equipment ||--o{ InventoryItem : recorded
     Equipment ||--o{ Attachment : has
     User ||--o{ Attachment : uploads
     Role ||--o{ User : assigned
@@ -68,6 +74,24 @@ erDiagram
         int size
         bytes content
         datetime createdAt
+    }
+    InventoryCheck {
+        uuid id PK
+        int number UK
+        uuid roomId FK
+        uuid createdById FK
+        uuid completedById FK
+        datetime createdAt
+        datetime completedAt
+    }
+    InventoryItem {
+        uuid checkId PK,FK
+        uuid equipmentId PK,FK
+        string equipmentName
+        string inventoryNumber
+        string statusAtStart
+        boolean found
+        datetime checkedAt
     }
     Role {
         uuid id PK
@@ -168,10 +192,10 @@ erDiagram
     }
 ```
 
-В БД 14 таблиц. PK — первичный ключ, FK — внешний ключ, UK — уникальное поле. RequestItem и LoanItem связывают заявки и выдачи с несколькими предметами. Исторические записи защищены от случайного удаления внешними ключами.
+В БД 16 таблиц. PK — первичный ключ, FK — внешний ключ, UK — уникальное поле. RequestItem и LoanItem связывают заявки и выдачи с несколькими предметами. InventoryItem хранит сведения о предмете на момент проверки. Исторические записи защищены от случайного удаления внешними ключами.
 
 ## Запуск и API
 
 Адреса и команды находятся в [README](../README.md), методы API — в [Swagger](https://85.8.201.148/api/docs/). Проверки описаны в [отчёте](testing-report.md).
 
-Осталось подключить инвентаризацию, управление пользователями, общую статистику, аудит и экспорт.
+Осталось подключить управление пользователями, общую статистику, аудит и экспорт.

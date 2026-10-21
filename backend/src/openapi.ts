@@ -1,6 +1,7 @@
 import { catalogPaths, catalogSchemas } from './catalog/openapi.js';
 import { circulationPaths, circulationSchemas } from './circulation/openapi.js';
 import { filePaths } from './files/openapi.js';
+import { inventoryPaths } from './inventory/openapi.js';
 const string = { type: 'string' };
 const password = { type: 'string', minLength: 8, maxLength: 72, format: 'password' };
 const profile = {
@@ -104,6 +105,7 @@ export const openapi = {
     ...catalogPaths,
     ...circulationPaths,
     ...filePaths,
+    ...inventoryPaths,
     '/health': {
       get: {
         summary: 'Database readiness',
