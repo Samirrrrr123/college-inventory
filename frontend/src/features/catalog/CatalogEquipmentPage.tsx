@@ -256,7 +256,7 @@ export function CatalogEquipmentPage() {
           <div className="detail-grid">
             <div className="equipment-placeholder">
               <Icon name="equipmentPlaceholder" />
-              <span>{t('photoMissing')}</span>
+              <span>{selected.category.name}</span>
             </div>
             <dl className="detail-list">
               <div>
