@@ -17,6 +17,7 @@ import { circulationController } from './circulation/controller.js';
 import { fileController } from './files/controller.js';
 import { inventoryController } from './inventory/controller.js';
 import { userController } from './users/controller.js';
+import { reportingController } from './reporting/controller.js';
 
 export function createApp(service: AuthService, config: Config) {
   const app = express();
@@ -56,6 +57,7 @@ export function createApp(service: AuthService, config: Config) {
   });
   app.get('/api/openapi.json', (_req, res) => res.json(openapi));
   app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(openapi));
+  app.use('/api', reportingController(service));
   app.use('/api', catalogController(service));
   app.use('/api', circulationController(service));
   app.use('/api', fileController(service));

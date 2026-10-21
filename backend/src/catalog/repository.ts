@@ -14,24 +14,30 @@ import { ApiError } from '../errors.js';
 const equipmentRelations = { category: true, room: true } as const;
 type EquipmentGuard = (equipment: { status: string; roomId: string }) => void;
 
+export function equipmentWhere(
+  query: Pick<EquipmentQuery, 'search' | 'categoryId' | 'roomId' | 'status'>,
+): Prisma.EquipmentWhereInput {
+  return {
+    ...(query.search
+      ? {
+          OR: [
+            { name: { contains: query.search, mode: 'insensitive' } },
+            { inventoryNumber: { contains: query.search, mode: 'insensitive' } },
+            { serialNumber: { contains: query.search, mode: 'insensitive' } },
+          ],
+        }
+      : {}),
+    ...(query.categoryId ? { categoryId: query.categoryId } : {}),
+    ...(query.roomId ? { roomId: query.roomId } : {}),
+    ...(query.status ? { status: query.status } : {}),
+  };
+}
+
 export class CatalogRepository {
   constructor(readonly db: PrismaClient) {}
 
   listEquipment(query: EquipmentQuery) {
-    const where: Prisma.EquipmentWhereInput = {
-      ...(query.search
-        ? {
-            OR: [
-              { name: { contains: query.search, mode: 'insensitive' } },
-              { inventoryNumber: { contains: query.search, mode: 'insensitive' } },
-              { serialNumber: { contains: query.search, mode: 'insensitive' } },
-            ],
-          }
-        : {}),
-      ...(query.categoryId ? { categoryId: query.categoryId } : {}),
-      ...(query.roomId ? { roomId: query.roomId } : {}),
-      ...(query.status ? { status: query.status } : {}),
-    };
+    const where = equipmentWhere(query);
     return this.db.$transaction(
       [
         this.db.equipment.findMany({
@@ -215,6 +221,10 @@ export class CatalogRepository {
   }
 
   private async write<T>(operation: (tx: Prisma.TransactionClient) => Promise<T>): Promise<T> {
+    return this.transaction(operation);
+  }
+
+  async transaction<T>(operation: (tx: Prisma.TransactionClient) => Promise<T>): Promise<T> {
     for (let attempt = 0; attempt < 3; attempt++) {
       try {
         return await this.db.$transaction(operation, { isolationLevel: 'Serializable' });

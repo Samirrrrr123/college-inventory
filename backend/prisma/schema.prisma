@@ -72,6 +72,9 @@ model AuditEntry {
   createdAt DateTime @default(now())
 
   @@index([actorId, createdAt])
+  @@index([createdAt, id])
+  @@index([entityType, entityId, createdAt])
+  @@index([action, createdAt])
 }
 
 enum EquipmentStatus {
@@ -141,6 +144,7 @@ model Movement {
   actor       User      @relation(fields: [actorId], references: [id], onDelete: NoAction)
 
   @@index([equipmentId, createdAt])
+  @@index([createdAt, id])
   @@index([fromRoomId])
   @@index([toRoomId])
   @@index([actorId])
@@ -199,6 +203,7 @@ model Loan {
   items        LoanItem[]
 
   @@index([recipientId, issuedAt])
+  @@index([issuedAt])
   @@index([returnedAt, dueAt])
   @@index([issuedById])
   @@index([returnedById])

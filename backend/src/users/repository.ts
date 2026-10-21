@@ -8,6 +8,16 @@ export const activeAdmin = { role: { code: 'admin' }, isBlocked: false };
 export class UserRepository {
   constructor(readonly db: PrismaClient) {}
 
+  detail(id: string) {
+    return this.db.$transaction(
+      [
+        this.db.user.findUnique({ where: { id }, select: userFields }),
+        this.db.user.count({ where: activeAdmin }),
+      ],
+      { isolationLevel: 'RepeatableRead' },
+    );
+  }
+
   list(query: UserQuery) {
     const where: Prisma.UserWhereInput = {
       OR: [

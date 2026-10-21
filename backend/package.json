@@ -18,13 +18,18 @@
     "generate": "prisma generate",
     "migrate": "prisma migrate deploy",
     "seed": "tsx --env-file=.env prisma/seed.ts",
-    "test": "vitest run --coverage"
+    "test": "vitest run --coverage",
+    "seed:demo": "tsx --env-file=.env prisma/demo-seed.ts",
+    "test:coverage": "vitest run --coverage",
+    "test:unit": "vitest run tests/service.test.ts tests/catalog-service.test.ts tests/circulation-service.test.ts",
+    "test:integration": "vitest run tests/auth.test.ts tests/catalog.test.ts tests/circulation.test.ts tests/files.test.ts tests/inventory.test.ts tests/users.test.ts tests/reporting.test.ts tests/operations-seed.test.ts"
   },
   "dependencies": {
     "@prisma/client": "6.19.3",
     "bcryptjs": "3.0.3",
     "cookie-parser": "1.4.7",
     "cors": "2.8.6",
+    "exceljs": "4.4.0",
     "express": "5.3.0",
     "express-rate-limit": "8.7.1",
     "helmet": "8.3.0",

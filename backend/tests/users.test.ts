@@ -79,7 +79,7 @@ describe('User administration with PostgreSQL', () => {
       {},
       { role: 'owner' },
       { isBlocked: 'false' },
-      { name: 'Other' },
+      { name: 'x' },
       { passwordHash: 'fake' },
       { roleId: randomUUID() },
     ])

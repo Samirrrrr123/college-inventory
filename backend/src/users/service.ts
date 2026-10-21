@@ -1,7 +1,8 @@
 import { ApiError } from '../errors.js';
+import bcrypt from 'bcryptjs';
 import { userFields } from '../auth/repository.js';
 import { UserRepository, activeAdmin } from './repository.js';
-import type { Actor, UserPatch, UserQuery } from './schemas.js';
+import type { Actor, UserInput, UserPatch, UserQuery } from './schemas.js';
 
 type User = {
   id: string;
@@ -18,6 +19,46 @@ const publicUser = (user: User, admins: number) => ({
 
 export class UserService {
   constructor(readonly repository: UserRepository) {}
+
+  async detail(id: string, actor: Actor) {
+    this.requireAdmin(actor);
+    const [user, admins] = await this.repository.detail(id);
+    if (!user) throw new ApiError(404, 'NOT_FOUND', 'User not found');
+    return publicUser(user, admins);
+  }
+
+  async create(input: UserInput, actor: Actor) {
+    this.requireAdmin(actor);
+    const passwordHash = await bcrypt.hash(input.password, 12);
+    return this.repository.write(async (tx) => {
+      const currentActor = await tx.user.findUnique({
+        where: { id: actor.id },
+        select: userFields,
+      });
+      if (!currentActor || currentActor.isBlocked || currentActor.role.code !== 'admin')
+        throw new ApiError(403, 'FORBIDDEN', 'Administrator access required');
+      const user = await tx.user.create({
+        data: {
+          name: input.name,
+          email: input.email,
+          passwordHash,
+          isBlocked: input.isBlocked,
+          role: { connect: { code: input.role } },
+        },
+        select: userFields,
+      });
+      await tx.auditEntry.create({
+        data: {
+          actorId: actor.id,
+          action: 'userCreated',
+          entityType: 'user',
+          entityId: user.id,
+          details: { role: input.role, isBlocked: input.isBlocked },
+        },
+      });
+      return publicUser(user, await tx.user.count({ where: activeAdmin }));
+    });
+  }
 
   async list(query: UserQuery, actor: Actor) {
     this.requireAdmin(actor);
@@ -55,11 +96,14 @@ export class UserService {
           'LAST_ADMIN',
           'The last active administrator must remain active',
         );
-      if (role === user.role.code && isBlocked === user.isBlocked)
+      const name = input.name ?? user.name;
+      const email = input.email ?? user.email;
+      const accessChanged = role !== user.role.code || isBlocked !== user.isBlocked;
+      if (!accessChanged && name === user.name && email === user.email)
         return publicUser(user, admins);
       const saved = await tx.user.update({
         where: { id },
-        data: { role: { connect: { code: role } }, isBlocked },
+        data: { name, email, role: { connect: { code: role } }, isBlocked },
         select: userFields,
       });
       await tx.session.deleteMany({ where: { userId: id } });
@@ -67,7 +111,7 @@ export class UserService {
       await tx.auditEntry.create({
         data: {
           actorId: actor.id,
-          action: 'userAccessChanged',
+          action: accessChanged ? 'userAccessChanged' : 'userProfileChanged',
           entityType: 'user',
           entityId: id,
           details: {

@@ -50,7 +50,9 @@ const equipment = {
       type: 'string',
       format: 'uuid',
       nullable: true,
-      description: 'Always null in this stage; file upload is not implemented yet',
+      deprecated: true,
+      description:
+        'Legacy nullable field, always null. Use /equipment/{equipmentId}/files for attachments.',
     },
     createdAt: { type: 'string', format: 'date-time' },
     updatedAt: { type: 'string', format: 'date-time' },

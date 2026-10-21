@@ -1,3 +1,5 @@
+import { reportingPaths, reportingSchemas } from './reporting/openapi.js';
+import { userPaths } from './users/openapi.js';
 import { catalogPaths, catalogSchemas } from './catalog/openapi.js';
 import { circulationPaths, circulationSchemas } from './circulation/openapi.js';
 import { filePaths } from './files/openapi.js';
@@ -69,10 +71,10 @@ const pagination = ['page', 'pageSize'].map((name) => ({
 export const openapi = {
   openapi: '3.0.3',
   info: {
-    title: 'Инвентарь — API аккаунтов и каталога',
-    version: '0.2.0',
+    title: 'Инвентарь — серверное API',
+    version: '1.0.0',
     description:
-      'Accounts, sessions, equipment, categories and rooms are implemented. Loans, uploads and exports are not implemented in this stage. Reset links are printed in server logs for the educational assignment.',
+      'Accounts, catalog, requests, atomic loans/returns, attachments, inventory checks, user administration, movements, dashboard, audit and XLSX export. Reset links are printed in server logs for the educational assignment.',
   },
   servers: [{ url: '/api' }],
   components: {
@@ -83,6 +85,7 @@ export const openapi = {
     schemas: {
       User: user,
       ...catalogSchemas,
+      ...reportingSchemas,
       ...circulationSchemas,
       Error: {
         type: 'object',
@@ -249,94 +252,7 @@ export const openapi = {
         },
       },
     },
-    '/users': {
-      get: {
-        summary: 'User list for administrators',
-        security: [{ bearerAuth: [] }],
-        parameters: [
-          ...pagination,
-          ...['search', 'role', 'sort', 'order', 'status'].map((name) => ({
-            in: 'query',
-            name,
-            schema: {
-              type: 'string',
-              ...(name === 'role'
-                ? { enum: ['teacher', 'technician', 'admin'] }
-                : name === 'status'
-                  ? { enum: ['active', 'blocked'] }
-                  : name === 'sort'
-                    ? { enum: ['name', 'email'] }
-                    : name === 'order'
-                      ? { enum: ['asc', 'desc'] }
-                      : {}),
-            },
-          })),
-        ],
-        responses: {
-          200: response({
-            type: 'object',
-            properties: {
-              data: {
-                type: 'array',
-                items: {
-                  ...user,
-                  properties: { ...user.properties, isLastAdmin: { type: 'boolean' } },
-                },
-              },
-              total: { type: 'integer' },
-              page: { type: 'integer' },
-              pageSize: { type: 'integer' },
-            },
-          }),
-          ...errors,
-        },
-      },
-    },
-    '/users/{id}': {
-      patch: {
-        summary: 'Change role and blocking; administrators only',
-        description:
-          'Only role and isBlocked can be changed. The last active administrator cannot be demoted or blocked, including concurrent changes. Effective changes revoke all sessions and password-reset codes of the target user. Unblocking does not restore old sessions. The actor is checked again inside the transaction. Changes and audit are saved together.',
-        security: [{ bearerAuth: [] }],
-        parameters: [
-          {
-            name: 'id',
-            in: 'path',
-            required: true,
-            schema: { type: 'string', format: 'uuid' },
-          },
-        ],
-        requestBody: {
-          required: true,
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                additionalProperties: false,
-                minProperties: 1,
-                properties: {
-                  role: { type: 'string', enum: ['teacher', 'technician', 'admin'] },
-                  isBlocked: { type: 'boolean' },
-                },
-              },
-            },
-          },
-        },
-        responses: {
-          200: response({
-            type: 'object',
-            properties: {
-              data: {
-                ...user,
-                properties: { ...user.properties, isLastAdmin: { type: 'boolean' } },
-              },
-            },
-          }),
-          ...errors,
-          404: { description: 'User not found' },
-          409: { description: 'LAST_ADMIN or CONCURRENT_CHANGE' },
-        },
-      },
-    },
+    ...reportingPaths,
+    ...userPaths,
   },
 };
