@@ -11,14 +11,33 @@ async function login(page: Page, role: string) {
 
 async function historyFixture(page: Page, baseURL: string, count: number) {
   const origin = new URL(baseURL).origin;
+  const suffix = crypto.randomUUID().slice(0, 8);
   const login = await page.request.post('/api/auth/login', {
     headers: { Origin: origin },
-    data: { email: 'technician@college.test', password: process.env.SEED_PASSWORD },
+    data: { email: 'admin@college.test', password: process.env.SEED_PASSWORD },
   });
   expect(login.status()).toBe(200);
-  const token = (await login.json()).data.accessToken as string;
+  const adminToken = (await login.json()).data.accessToken as string;
+  const email = `history-e2e-${suffix}@college.test`;
+  const password = `History-${suffix}-test`;
+  const registered = await page.request.post('/api/auth/register', {
+    headers: { Origin: origin },
+    data: { name: `Автор истории ${suffix}`, email, password },
+  });
+  expect(registered.status()).toBe(201);
+  const authorId = (await registered.json()).data.id as string;
+  const promoted = await page.request.patch(`/api/users/${authorId}`, {
+    headers: { Origin: origin, Authorization: `Bearer ${adminToken}` },
+    data: { role: 'technician' },
+  });
+  expect(promoted.status()).toBe(200);
+  const authorLogin = await page.request.post('/api/auth/login', {
+    headers: { Origin: origin },
+    data: { email, password },
+  });
+  expect(authorLogin.status()).toBe(200);
+  const token = (await authorLogin.json()).data.accessToken as string;
   const headers = { Origin: origin, Authorization: `Bearer ${token}` };
-  const suffix = crypto.randomUUID().slice(0, 8);
   const category = await page.request.post('/api/categories', {
     headers,
     data: { name: `История ${suffix}` },
