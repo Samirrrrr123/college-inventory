@@ -26,6 +26,11 @@ model User {
   resetTokens  PasswordReset[]
   activity     AuditEntry[]
   movements    Movement[]
+  requests     EquipmentRequest[] @relation("Requester")
+  reviews      EquipmentRequest[] @relation("Reviewer")
+  borrowed     Loan[] @relation("Recipient")
+  issuedLoans  Loan[] @relation("Issuer")
+  returnedLoans Loan[] @relation("Returner")
 
   @@index([roleId])
   @@index([name])
@@ -107,6 +112,8 @@ model Equipment {
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
   movements       Movement[]
+  requestItems    RequestItem[]
+  loanItems       LoanItem[]
 
   @@index([categoryId])
   @@index([roomId])
@@ -131,4 +138,72 @@ model Movement {
   @@index([fromRoomId])
   @@index([toRoomId])
   @@index([actorId])
+}
+
+enum RequestStatus {
+  pending
+  approved
+  rejected
+  cancelled
+}
+
+model EquipmentRequest {
+  id           String @id @default(uuid()) @db.Uuid
+  number       Int @unique @default(autoincrement())
+  requesterId  String @db.Uuid
+  reviewerId   String? @db.Uuid
+  purpose      String @db.VarChar(300)
+  status       RequestStatus @default(pending)
+  decisionNote String @default("") @db.VarChar(500)
+  createdAt    DateTime @default(now())
+  reviewedAt   DateTime?
+  requester    User @relation("Requester", fields: [requesterId], references: [id], onDelete: NoAction)
+  reviewer     User? @relation("Reviewer", fields: [reviewerId], references: [id], onDelete: NoAction)
+  items        RequestItem[]
+  loan         Loan?
+
+  @@index([requesterId, createdAt])
+  @@index([status, createdAt])
+}
+
+model RequestItem {
+  requestId   String @db.Uuid
+  equipmentId String @db.Uuid
+  request     EquipmentRequest @relation(fields: [requestId], references: [id], onDelete: Cascade)
+  equipment   Equipment @relation(fields: [equipmentId], references: [id], onDelete: NoAction)
+
+  @@id([requestId, equipmentId])
+  @@index([equipmentId])
+}
+
+model Loan {
+  id           String @id @default(uuid()) @db.Uuid
+  number       Int @unique @default(autoincrement())
+  requestId    String? @unique @db.Uuid
+  recipientId  String @db.Uuid
+  issuedById   String @db.Uuid
+  returnedById String? @db.Uuid
+  issuedAt     DateTime @default(now())
+  dueAt        DateTime
+  returnedAt   DateTime?
+  request      EquipmentRequest? @relation(fields: [requestId], references: [id], onDelete: NoAction)
+  recipient    User @relation("Recipient", fields: [recipientId], references: [id], onDelete: NoAction)
+  issuedBy     User @relation("Issuer", fields: [issuedById], references: [id], onDelete: NoAction)
+  returnedBy   User? @relation("Returner", fields: [returnedById], references: [id], onDelete: NoAction)
+  items        LoanItem[]
+
+  @@index([recipientId, issuedAt])
+  @@index([returnedAt, dueAt])
+  @@index([issuedById])
+  @@index([returnedById])
+}
+
+model LoanItem {
+  loanId      String @db.Uuid
+  equipmentId String @db.Uuid
+  loan        Loan @relation(fields: [loanId], references: [id], onDelete: Cascade)
+  equipment   Equipment @relation(fields: [equipmentId], references: [id], onDelete: NoAction)
+
+  @@id([loanId, equipmentId])
+  @@index([equipmentId])
 }

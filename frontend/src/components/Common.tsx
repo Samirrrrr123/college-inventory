@@ -12,6 +12,7 @@ const labels: Record<EquipmentStatus | RequestStatus | Role, MessageKey> = {
   PENDING: 'pending',
   APPROVED: 'approved',
   REJECTED: 'rejected',
+  CANCELLED: 'cancelled',
   ADMIN: 'admin',
   LAB_ASSISTANT: 'assistant',
   TEACHER: 'teacher',
