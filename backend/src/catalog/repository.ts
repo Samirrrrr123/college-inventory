@@ -17,8 +17,10 @@ type EquipmentGuard = (equipment: { status: string; roomId: string }) => void;
 export class CatalogRepository {
   constructor(readonly db: PrismaClient) {}
 
-  listEquipment(query: EquipmentQuery) {
-    const where: Prisma.EquipmentWhereInput = {
+  equipmentWhere(
+    query: Pick<EquipmentQuery, 'search' | 'categoryId' | 'roomId' | 'status'>,
+  ): Prisma.EquipmentWhereInput {
+    return {
       ...(query.search
         ? {
             OR: [
@@ -32,6 +34,19 @@ export class CatalogRepository {
       ...(query.roomId ? { roomId: query.roomId } : {}),
       ...(query.status ? { status: query.status } : {}),
     };
+  }
+
+  exportEquipment(query: Omit<EquipmentQuery, 'page' | 'pageSize'>, limit: number) {
+    return this.db.equipment.findMany({
+      where: this.equipmentWhere(query),
+      include: equipmentRelations,
+      orderBy: [{ [query.sort]: query.order }, { id: 'asc' }],
+      take: limit + 1,
+    });
+  }
+
+  listEquipment(query: EquipmentQuery) {
+    const where = this.equipmentWhere(query);
     return this.db.$transaction(
       [
         this.db.equipment.findMany({

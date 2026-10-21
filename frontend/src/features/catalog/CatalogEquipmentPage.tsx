@@ -19,7 +19,7 @@ import { CatalogEquipmentForm } from './CatalogEquipmentForm';
 import { EquipmentFiles } from './EquipmentFiles';
 
 export function CatalogEquipmentPage() {
-  const { t, date } = usePreferences();
+  const { t, date, language } = usePreferences();
   const account = useCurrentAccount();
   const [params] = useSearchParams();
   const [search, setSearch] = useState('');
@@ -39,6 +39,7 @@ export function CatalogEquipmentPage() {
   const [selected, setSelected] = useState<EquipmentRecord | null>(null);
   const [deleting, setDeleting] = useState<EquipmentRecord | null>(null);
   const [opening, setOpening] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const [notice, setNotice] = useState('');
   const canManage = account.role !== 'teacher';
   const path = `/equipment?${queryString({ search: term, categoryId, roomId, status, sort: 'name', order: ascending ? 'asc' : 'desc', page, pageSize: 7 })}`;
@@ -83,9 +84,45 @@ export function CatalogEquipmentPage() {
     }
   }
 
+  async function exportEquipment() {
+    setExporting(true);
+    setNotice('');
+    try {
+      const query = queryString({
+        search: term,
+        categoryId,
+        roomId,
+        status,
+        sort: 'name',
+        order: ascending ? 'asc' : 'desc',
+        language,
+      });
+      const blob = await api<Blob>(`/equipment/export?${query}`, 'GET', undefined, true);
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'equipment.xlsx';
+      link.click();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (error) {
+      setNotice(errorMessage(error, t));
+    } finally {
+      setExporting(false);
+    }
+  }
+
   return (
     <>
       <PageHeader title={t('equipment')} subtitle={t('equipmentSubtitle')}>
+        {canManage && (
+          <Button
+            variant="secondary"
+            disabled={exporting || loading || !!failure || search !== term}
+            onClick={exportEquipment}
+          >
+            {t(exporting ? 'exportingXlsx' : 'exportXlsx')}
+          </Button>
+        )}
         {canManage && (
           <Button
             onClick={() => setForm('new')}

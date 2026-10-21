@@ -2,6 +2,7 @@ import type { MessageKey } from '../i18n/messages';
 import { ApiError } from './client';
 
 const keys: Record<string, MessageKey> = {
+  EXPORT_LIMIT: 'exportLimit',
   LAST_ADMIN: 'lastAdmin',
   NO_EQUIPMENT: 'noCheckEquipment',
   CHECK_INCOMPLETE: 'checkIncomplete',
