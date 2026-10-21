@@ -2,6 +2,10 @@ import type { MessageKey } from '../i18n/messages';
 import { ApiError } from './client';
 
 const keys: Record<string, MessageKey> = {
+  INVALID_FILE_TYPE: 'fileTypeError',
+  INVALID_FILE_NAME: 'invalidFileName',
+  EMPTY_FILE: 'emptyFile',
+  BODY_TOO_LARGE: 'fileSizeError',
   NETWORK_ERROR: 'serverUnavailable',
   API_NOT_CONNECTED: 'serverUnavailable',
   INVALID_CREDENTIALS: 'incorrectCredentials',

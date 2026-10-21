@@ -10,22 +10,27 @@ export class ApiError extends Error {
 let accessToken: string | null = null;
 let refreshing: Promise<void> | null = null;
 
-async function send<T>(path: string, method: string, body?: unknown): Promise<T> {
+async function send<T>(path: string, method: string, body?: unknown, download = false): Promise<T> {
   let response: Response;
   try {
     response = await fetch(`/api${path}`, {
       method,
       credentials: 'include',
       headers: {
-        ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}),
+        ...(body instanceof File
+          ? { 'Content-Type': body.type, 'X-File-Name': encodeURIComponent(body.name) }
+          : body !== undefined
+            ? { 'Content-Type': 'application/json' }
+            : {}),
         ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       },
-      ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+      ...(body !== undefined ? { body: body instanceof File ? body : JSON.stringify(body) } : {}),
     });
   } catch {
     throw new ApiError('NETWORK_ERROR', 0);
   }
   if (response.status === 204) return undefined as T;
+  if (response.ok && download) return (await response.blob()) as T;
   const result: unknown = await response.json().catch(() => null);
   if (!response.ok) {
     let code = 'REQUEST_FAILED';
@@ -56,14 +61,19 @@ export async function refreshSession() {
   return refreshing;
 }
 
-export async function api<T>(path: string, method = 'GET', body?: unknown): Promise<T> {
+export async function api<T>(
+  path: string,
+  method = 'GET',
+  body?: unknown,
+  download = false,
+): Promise<T> {
   if (!accessToken) await refreshSession();
   try {
-    return await send<T>(path, method, body);
+    return await send<T>(path, method, body, download);
   } catch (error) {
     if (!(error instanceof ApiError) || error.status !== 401) throw error;
     await refreshSession();
-    return send<T>(path, method, body);
+    return send<T>(path, method, body, download);
   }
 }
 

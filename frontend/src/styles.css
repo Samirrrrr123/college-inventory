@@ -1908,3 +1908,47 @@ body:has(dialog[open]) {
 .directory-filters {
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
 }
+.equipment-files fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0 0 16px;
+  min-width: 0;
+}
+
+.equipment-files input[type='file'] {
+  width: 100%;
+  max-width: 100%;
+  font: inherit;
+}
+
+.file-list {
+  list-style: none;
+  padding: 0;
+}
+
+.file-list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 0;
+}
+
+.file-list li > div:first-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.file-list small {
+  display: block;
+}
+
+.file-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.file-confirmation {
+  padding: 12px 0;
+}

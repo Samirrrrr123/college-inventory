@@ -1,4 +1,18 @@
 export const messages = {
+  files: ['Фото и документы', 'Photos and documents'],
+  chooseFile: ['Выберите файл', 'Choose a file'],
+  emptyFile: ['Файл пустой', 'The file is empty'],
+  noFiles: ['Файлов пока нет', 'No files yet'],
+  fileSearch: ['Найти файл', 'Search files'],
+  uploadFile: ['Загрузить файл', 'Upload file'],
+  downloadFile: ['Скачать', 'Download'],
+  confirmDeleteFile: ['Удалить файл', 'Delete file'],
+  invalidFileName: [
+    'Название файла недопустимо или длиннее 160 символов',
+    'The file name is invalid or longer than 160 characters',
+  ],
+  fileUploaded: ['Файл добавлен', 'File uploaded'],
+  fileDeleted: ['Файл удалён', 'File deleted'],
   liveCatalog: ['Рабочее приложение', 'Live application'],
   number: ['Номер', 'Number'],
   cancelled: ['Отменена', 'Cancelled'],

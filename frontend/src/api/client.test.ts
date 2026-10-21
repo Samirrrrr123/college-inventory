@@ -10,6 +10,33 @@ const result = (data: unknown, status = 200) =>
   new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json' } });
 
 describe('API sessions', () => {
+  it('retries the same file after refresh and receives authenticated binary downloads', async () => {
+    const file = new File(['photo'], 'фото.png', { type: 'image/png' });
+    let uploads = 0;
+    const fetch = vi.fn(async (path: string, options: RequestInit) => {
+      if (path === '/api/auth/refresh') return result({ data: { accessToken: 'fresh' } });
+      expect(options.headers).toMatchObject({ Authorization: 'Bearer fresh' });
+      if (options.method === 'POST') {
+        expect(options.body).toBe(file);
+        expect(options.headers).toMatchObject({
+          'X-File-Name': encodeURIComponent(file.name),
+          'Content-Type': 'image/png',
+        });
+        uploads += 1;
+        return uploads === 1
+          ? result({ error: { code: 'UNAUTHORIZED' } }, 401)
+          : result({ data: { id: 'file' } });
+      }
+      return new Response('file-bytes', { headers: { 'Content-Type': 'image/png' } });
+    });
+    vi.stubGlobal('fetch', fetch);
+    await expect(api('/equipment/id/files', 'POST', file)).resolves.toEqual({
+      data: { id: 'file' },
+    });
+    expect(uploads).toBe(2);
+    const blob = await api<Blob>('/equipment/id/files/file', 'GET', undefined, true);
+    expect(await blob.text()).toBe('file-bytes');
+  });
   it('refreshes once for concurrent requests and keeps tokens out of web storage', async () => {
     const fetch = vi.fn(async (path: string, options: RequestInit) => {
       if (path === '/api/auth/refresh')

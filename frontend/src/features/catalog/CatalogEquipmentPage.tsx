@@ -16,6 +16,7 @@ import { useDebouncedValue } from './useDebouncedValue';
 import { ApiFeedback } from './ApiFeedback';
 import { ApiDeleteDialog } from './ApiDeleteDialog';
 import { CatalogEquipmentForm } from './CatalogEquipmentForm';
+import { EquipmentFiles } from './EquipmentFiles';
 
 export function CatalogEquipmentPage() {
   const { t, date } = usePreferences();
@@ -286,7 +287,7 @@ export function CatalogEquipmentPage() {
               <p>{selected.description}</p>
             </section>
           )}
-          <p className="muted small-text">{t('uploadNotReady')}</p>
+          <EquipmentFiles equipmentId={selected.id} canManage={canManage} />
           {canManage && (
             <div className="dialog-actions">
               <Button
