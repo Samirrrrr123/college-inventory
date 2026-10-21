@@ -4,7 +4,6 @@ import { z } from 'zod';
 import type { Config } from '../config.js';
 import { ApiError } from '../errors.js';
 import { AuthService } from './service.js';
-import { userFields } from './repository.js';
 
 const name = z.string().trim().min(2).max(100);
 const email = z
@@ -152,39 +151,6 @@ export function authController(service: AuthService, config: Config) {
       service.repository.db.auditEntry.count({ where }),
     ]);
     res.json({ data, total, page, pageSize });
-  });
-  router.get('/users', requireRoles('admin'), async (req, res) => {
-    const query = paging
-      .extend({
-        search: z.string().trim().max(100).default(''),
-        role: z.enum(['teacher', 'technician', 'admin']).optional(),
-        sort: z.enum(['name', 'email']).default('name'),
-        order: z.enum(['asc', 'desc']).default('asc'),
-      })
-      .parse(req.query);
-    const where = {
-      OR: [
-        { name: { contains: query.search, mode: 'insensitive' as const } },
-        { email: { contains: query.search, mode: 'insensitive' as const } },
-      ],
-      ...(query.role ? { role: { code: query.role } } : {}),
-    };
-    const [users, total] = await service.repository.db.$transaction([
-      service.repository.db.user.findMany({
-        where,
-        select: userFields,
-        orderBy: [{ [query.sort]: query.order }, { id: 'asc' }],
-        skip: (query.page - 1) * query.pageSize,
-        take: query.pageSize,
-      }),
-      service.repository.db.user.count({ where }),
-    ]);
-    res.json({
-      data: users.map(publicUser),
-      total,
-      page: query.page,
-      pageSize: query.pageSize,
-    });
   });
   return router;
 }

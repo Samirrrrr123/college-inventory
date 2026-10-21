@@ -15,6 +15,7 @@ import { CatalogEquipmentPage } from '../features/catalog/CatalogEquipmentPage';
 import { CatalogDirectoriesPage } from '../features/catalog/CatalogDirectoriesPage';
 import { LiveRequestsPage } from '../features/circulation/LiveRequestsPage';
 import { InventoryPage } from '../features/inventory/InventoryPage';
+import { UsersPage } from '../features/users/UsersPage';
 
 function NotFoundPage() {
   const { t } = usePreferences();
@@ -37,6 +38,7 @@ export function App() {
         <Route path="requests" element={<LiveRequestsPage />} />
         <Route path="inventory" element={<InventoryPage />} />
         <Route path="inventory/:id" element={<InventoryPage />} />
+        <Route path="users" element={<UsersPage />} />
         <Route path="rooms" element={<CatalogDirectoriesPage key="rooms" kind="rooms" />} />
         <Route
           path="categories"

@@ -36,7 +36,7 @@ const errors = Object.fromEntries(
 );
 const parameters = [{ name: 'equipmentId', in: 'path', required: true, schema: id }];
 const security = [{ bearerAuth: [] }];
-const root = '/api/equipment/{equipmentId}/files';
+const root = '/equipment/{equipmentId}/files';
 const binary = Object.fromEntries(
   ['image/png', 'image/jpeg', 'application/pdf'].map((type) => [
     type,

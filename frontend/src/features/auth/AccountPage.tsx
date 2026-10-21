@@ -113,6 +113,7 @@ export function AccountPage() {
     inventoryStarted: t('inventoryStarted'),
     inventoryItemChecked: t('inventoryItemChecked'),
     inventoryCompleted: t('inventoryCompleted'),
+    userAccessChanged: t('userAccessChanged'),
     equipmentCreated: `${t('equipment')}: ${t('created')}`,
     equipmentUpdated: `${t('equipment')}: ${t('updated')}`,
     equipmentDeleted: `${t('equipment')}: ${t('deleted')}`,
